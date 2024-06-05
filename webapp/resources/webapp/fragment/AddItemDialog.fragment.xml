@@ -1,0 +1,52 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<Dialog title="Add Record" draggable="true" stretch="false" contentWidth="65%">
+		<Panel class="bgwhite">
+			<l:Grid>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>MTKey}" required="true"/>
+					<Text id="ip1" text="{/MT_KEY}"/>
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>SoldTo}" required="true"/>
+					<Text id="ip2" text="{/SOLD_TO}"/>
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>SoldToDesc}" required="true"/>
+					<Text id="ip3" text="{/SOLD_TO_DESC}" />
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>Mat}" required="true"/>
+					<Text id="ip4" text="{/MATNR}" />
+				</l:VerticalLayout>
+					<l:VerticalLayout width="100%">
+					<Label text="{i18n>Matx}" required="true"/>
+					<Text id="ip5" text="{/MAKTX}"/>
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>MTSegId}" required="true"/>
+					<Text id="ip6" text="{/MT_SEG_ID}"/>
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>MTSefDesc}" required="true"/>
+					<Text id="ip7" text="{/MT_SEG_DESC}" />
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>MktSeg}" required="true"/>
+					<Text id="ip8" text="{/MARKET_SEG}" />
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>Comments}" required="true"/>
+					<Input id="ip9" value="{/COMMENTS}" editable="true" />
+				</l:VerticalLayout>
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>Mktoff}" required="true"/>
+					<Input id="ip10" value="{/MKT_SIGN}" editable="true" />
+				</l:VerticalLayout>
+			</l:Grid>
+			<HBox justifyContent="End" class="sapUiTinyMarginEnd">
+				<Button text="Save" press="onSave" type="Emphasized" class="sapUiTinyMarginEnd"/>
+				<Button text="Cancel" press="onCancel" class="sapUiTinyMarginEnd"/>
+			</HBox>
+		</Panel>
+	</Dialog>
+</core:FragmentDefinition>

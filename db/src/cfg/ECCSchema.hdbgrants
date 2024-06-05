@@ -1,0 +1,10 @@
+{
+	"ServiceName_1": {
+		"object_owner" : {
+			"roles" : ["CSROLE" ]
+			},
+		"application_user" : {
+			"roles" : ["CSROLE" ]
+		}
+	}
+}

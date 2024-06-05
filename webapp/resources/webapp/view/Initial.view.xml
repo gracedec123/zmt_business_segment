@@ -1,0 +1,131 @@
+<mvc:View controllerName="webapp.webapp.controller.Initial" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+	xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:sv="sap.ui.comp.smartvariants" xmlns:table="sap.ui.table"
+	xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified" xmlns:fb="sap.ui.comp.filterbar" xmlns:html="http://www.w3.org/1999/xhtml">
+	<App id="app">
+		<pages>
+			<Page id="page" navButtonPress="onNavBack" title="{i18n>titleInital}">
+				<fb:FilterBar id="filterBar1" showGoButton="true" search="onFilter" showFilterConfiguration="true" useToolbar="true">
+					<fb:filterGroupItems>
+						<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="dateRange" label="Creation Date" labelTooltip="Creation Date">
+							<fb:control>
+								<DateRangeSelection id="idCdate" width="200%" displayFormat="yyyy-MM-dd" change='onCdate'/>
+							</fb:control>
+						</fb:FilterGroupItem>
+						<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="dateRangeChange" label="Changed Date" labelTooltip="Changed Date">
+							<fb:control>
+								<DateRangeSelection id="idChdate" width="200%" displayFormat="yyyy-MM-dd" change='onChdate'/>
+							</fb:control>
+						</fb:FilterGroupItem>
+					</fb:filterGroupItems>
+				</fb:FilterBar>
+				<ScrollContainer>
+					<content>
+						<FlexBox height="50px" alignItems="Center" justifyContent="Center">
+							<items>
+								<Label busy="false" design="Bold" id="__labelso" required="true" text="XLSX File Path" textAlign="Left" width="110px"
+									class="sapUiSmallMarginEnd"/>
+								<u:FileUploader id="FileUploaderId" sameFilenameAllowed="true" uploadUrl="upload/" fileType="XLSX,xlsx" change="onUpload"/>
+							</items>
+						</FlexBox>
+						<FlexBox height="50px" alignItems="Center" justifyContent="Center">
+							<items>
+								<Button text="Upload" width="100px" id="buttonupload" press="onuploadBtn" type="Accept"/>
+							</items>
+						</FlexBox>
+							<Table id="tableId1" sticky="ColumnHeaders" growing="true" mode="MultiSelect" selectionChange="HandleSelect" growingThreshold="20"
+								growingScrollToLoad="false" items="{tableModel>/}">
+								<headerToolbar>
+									<Toolbar>
+										<HBox class="sapUiTinyMarginBeginEnd" alignItems="Center" justifyContent="End">
+											<SearchField id="Search" class="bgtransparent" search="onSearch"/>
+										</HBox>
+										<ToolbarSpacer/>
+										<Button id="butMore" text="show / hide column" icon="sap-icon://open-command-field" press="onPress"/>
+									</Toolbar>
+								</headerToolbar>
+								<columns>
+									<Column width="25%">
+										<Text text="{i18n>action}" textAlign="Center"/>
+									</Column>
+									<Column width="70%">
+										<Text text="{i18n>MTKey}"/>
+									</Column>
+									<Column id="showColumn5" width="55%">
+										<Text text="{i18n>SoldTo}"/>
+									</Column>
+									<Column id="showColumn" width="100%">
+										<Text text="{i18n>SoldToDesc}"/>
+									</Column>
+									<Column id="showColumn1" width="75%">
+										<Text text="{i18n>Mat}"/>
+									</Column>
+									<Column id="showColumn2" width="120%">
+										<Text text="{i18n>Matx}"/>
+									</Column>
+									<Column id="showColumn3" width="100%">
+										<Text text="{i18n>MTSegId}"/>
+									</Column>
+									<Column id="hideColumn" width="100%">
+										<Text text="{i18n>MktSeg}"/>
+									</Column>
+									<Column id="hideColumn2" width="100%">
+										<Text text="{i18n>Comments}"/>
+									</Column>
+									<Column id="hideColumn3" width="100%">
+										<Text text="{i18n>Mktoff}"/>
+									</Column>
+									<Column id="hideColumn4" width="100%">
+									<!--	<Text text="{i18n>Createdon}"/>-->
+									  <Button text="{i18n>Createdon}" type="Transparent" width="100px" id="buttonCreate" press="onFilterCreate"/>
+									</Column>
+									<Column id="hideColumn5" width="100%">
+										<Text text="{i18n>lastModifiedBy}"/>
+									</Column>
+									<Column id="hideColumn6" width="100%">
+									<!--	<Text text="{i18n>lastModifiedTime}"/> --> 
+										<Button text="{i18n>lastModifiedTime}" type="Transparent" width="100px" id="buttonChange" press="onFilterChange"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<HBox>
+												<Button icon="sap-icon://edit" press="onEdit"/>
+											</HBox>
+											<Text text="{tableModel>MT_KEY}"/>
+											<Text text="{tableModel>SOLD_TO}"/>
+											<Text text="{tableModel>SOLD_TO_DESC}"/>
+											<Text text="{tableModel>MATNR}"/>
+											<Text text="{tableModel>MAKTX}"/>
+											<Text text="{tableModel>MT_SEG_ID}  {tableModel>MT_SEG_DESC}"/>
+											<Text text="{tableModel>MARKET_SEG}"/>
+											<Text text="{tableModel>COMMENTS}"/>
+											<Text text="{tableModel>MKT_SIGN}"/>
+											<Text text="{tableModel>CREATED_ON}"/>
+											<Text text="{tableModel>LAST_MODIFIED_USER}"/>
+											<Text text="{tableModel>LAST_MODIFIED_TIMESTAMP}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+					</content>
+				</ScrollContainer>
+				<footer>
+					<Bar id="__bar0">
+						<customData>
+							<core:CustomData key="sap-ui-fastnavgroup" value="true" writeToDom="true" id="__dataso"/>
+						</customData>
+						<contentLeft>
+							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://arrow-right" type="Emphasized" text="Transfer" press="onTransfer"/>
+							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://delete" type="Emphasized" text="Delete" press="onDelete"/>
+						</contentLeft>
+						<contentRight>
+							<Button text="Back" width="100px" id="buttonBack0r" press="onBackInitial" type="Default"/>
+						</contentRight>
+					</Bar>
+				</footer>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

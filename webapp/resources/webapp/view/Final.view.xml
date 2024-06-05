@@ -1,0 +1,79 @@
+<mvc:View controllerName="webapp.webapp.controller.Final" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+	xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:table="sap.ui.table" xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<App id="app">
+		<pages>
+			<Page id="page" navButtonPress="onNavBack" title="{i18n>titleFinal}">
+				<content>
+				<ScrollContainer>
+					<HBox class="sapUiTinyMarginBeginEnd" alignItems="Center" justifyContent="End"></HBox>
+					<Table id="tableId1" growing="true" growingThreshold="20" growingScrollToLoad="false" items="{tableModelFinal>/}">
+						<headerToolbar>
+							<Toolbar>
+								<SearchField id="Search" class="bgtransparent" search="onSearch"/>
+								<ToolbarSpacer></ToolbarSpacer>	
+								<Button id="butMore" text="show / hide column" icon="sap-icon://open-command-field" press="onPress"/>
+								<ToolbarSpacer></ToolbarSpacer>			
+								<Button icon="sap-icon://download" press="onDataExport"/>
+							</Toolbar>
+						</headerToolbar>
+						<columns>
+							<Column width="65%">
+								<Text text="{i18n>SoldTo}"/>
+							</Column>
+							<Column width="110%">
+								<Text text="{i18n>SoldToDesc}"/>
+							</Column>
+							<Column width="75%" id="showColumn" >
+								<Text text="{i18n>Mat}"/>
+							</Column>
+							<Column width="110%" id="showColumn1" >
+								<Text text="{i18n>Matx}"/>
+							</Column>
+							<Column width="130%" id="showColumn2" >
+								<Text text="{i18n>MTSegId}"/>
+							</Column>
+							<Column width="80%" id="hideColumn">
+								<Text text="{i18n>MktSeg}"/>
+							</Column>
+							<Column width="100%" id="hideColumn1">
+								<Text text="{i18n>lastModifiedBy}"/>
+							</Column>
+							<Column width="100%" id="hideColumn2">
+								<Button text="{i18n>lastModifiedTime}" type="Transparent" width="100px" id="buttonChange" press="onFilterChange"/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<Text text="{tableModelFinal>SOLD_TO}"/>
+									<Text text="{tableModelFinal>SOLD_TO_DESC}"/>
+									<Text text="{tableModelFinal>MATNR}"/>
+									<Text text="{tableModelFinal>MAKTX}"/>
+									<Text text="{tableModelFinal>MT_SEG_ID}, {tableModelFinal>MT_SEG_DESC}"/>
+									<Text text="{tableModelFinal>MARKET_SEG}"/>
+									<Text text="{tableModelFinal>LAST_MODIFIED_USER}"/>
+									<Text text="{tableModelFinal>LAST_MODIFIED_TIMESTAMP}"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</ScrollContainer>
+				</content>
+				<footer>
+					<Bar id="__bar0">
+						<customData>
+							<core:CustomData key="sap-ui-fastnavgroup" value="true" writeToDom="true" id="__dataso"/>
+						</customData>
+						<contentLeft>
+							<Button icon="sap-icon://synchronize" width="100px" id="buttonRefresh" press="onRefresh" type="Emphasized"/>
+						</contentLeft>
+						<contentRight>
+							<Button text="Back" width="100px" id="buttonBack0r" press="onBackFinal" type="Default"/>
+						</contentRight>
+					</Bar>
+				</footer>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

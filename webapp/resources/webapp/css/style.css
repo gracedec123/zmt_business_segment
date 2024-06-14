@@ -1,1 +1,32 @@
-/* Enter your custom styles here */
+.fullHeight {
+   height: 100%;
+}
+.stickyFilterBar {
+   position: -webkit-sticky; /* For Safari */
+   position: sticky;
+   top: 0;
+   background-color: #f8f9fa; /* Adjust as necessary */
+   z-index: 1000; /* Ensures it stays on top */
+   border-bottom: 1px solid #ddd;
+}
+.tableScrollContainer {
+   overflow-y: auto; /* Enable vertical scrolling */
+   position: relative; /* Needed for sticky positioning */
+   flex-grow: 1; /* Ensures it takes available height */
+}
+.stickyToolbar {
+   position: -webkit-sticky; /* For Safari */
+   position: sticky;
+   top: 0;
+   background-color: white; /* Adjust as necessary */
+   z-index: 1000; /* Ensures it stays on top of other content */
+   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Optional shadow for better visibility */
+}
+.fixedTableHeader .sapMListTblHeader {
+   position: -webkit-sticky; /* For Safari */
+   position: sticky;
+   top: 0.9px; /* Adjust based on the height of the toolbar */
+   z-index: 1000; /* Ensure it stays on top of other content */
+   background-color: white; /* Adjust as necessary */
+   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Optional shadow for better visibility */
+}

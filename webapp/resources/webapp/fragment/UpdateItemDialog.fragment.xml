@@ -34,7 +34,7 @@
 					<l:VerticalLayout>
 						<Label text="MT Biz Seg"/>
 						<ComboBox id="comboBox" items="{options>/}">
-							<core:ListItem key="{options>MVGR4}" text="{options>MVGR4} {options>BEZEI}"/>
+							<core:ListItem key="{options>MT_ID}" text="{options>MT_ID} {options>MT_DESC}"/>
 						</ComboBox>
 					</l:VerticalLayout>
 					<l:VerticalLayout width="100%">

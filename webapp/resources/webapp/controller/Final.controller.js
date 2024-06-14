@@ -174,7 +174,6 @@ sap.ui.define([
 						new Filter("MARKET_SEG", FilterOperator.Contains, searchTerm)
 					], false);
 					binding.filter([oFilterArr]);
-					this.getView().byId("Search").setValue('');
 				}
 			}
 		});

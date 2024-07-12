@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectDialogMUsr"
+		title="{i18n>lastModifiedBy}"
+		items="{oUsr>/}"
+		class="F4height"
+		search=".onValueHelpSearchUsr"
+		confirm=".onValueHelpCloseUsr"
+		cancel=".onValueHelpCloseUsr">
+		<StandardListItem
+			iconDensityAware="false"
+			iconInset="false"
+			title="{oUsr>LAST_MODIFIED_USER}" />
+	</SelectDialog>
+</core:FragmentDefinition>

@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<Dialog title="Signoff" draggable="true" stretch="false" contentWidth="30%">
+		<Panel class="bgwhite">
+				<l:VerticalLayout width="100%">
+					<Label text="{i18n>Mktoff}" required="true"/>
+					<Input id="ip10" value="{/MKT_SIGN}" editable="true" />
+				</l:VerticalLayout>
+			<HBox justifyContent="End" class="sapUiTinyMarginEnd">
+				<Button text="Save" press="onSignSave" type="Emphasized" class="sapUiTinyMarginEnd"/>
+				<Button text="Cancel" press="onCancel" class="sapUiTinyMarginEnd"/>
+			</HBox>
+		</Panel>
+	</Dialog>
+</core:FragmentDefinition>

@@ -59,9 +59,65 @@ sap.ui.define([
 				var oSorter = new Sorter("LAST_MODIFIED_TIMESTAMP", this._bDescendingSort);
 				binding.sort(oSorter);
 			},
+			onFilterlastModifiedBy: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("LAST_MODIFIED_USER", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMktoff: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MKT_SIGN", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMktSeg: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MARKET_SEG", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMTSegId: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MT_SEG_ID", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMatx: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MAKTX", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMat: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MATNR", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterSoldToDesc: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("SOLD_TO_DESC", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterSoldTo: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("SOLD_TO", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
 			onRefresh: function (oEvent) {
 				this.loadTableData();
-			},	
+			},
 			onPress: function (oEvent) {
 				var oColumn = this.getView().byId("hideColumn");
 				oColumn.setVisible(!oColumn.getVisible());

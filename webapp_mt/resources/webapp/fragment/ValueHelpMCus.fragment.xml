@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectDialogCus"
+		title="{i18n>SoldTo}"
+		items="{oCus>/}"
+		class="F4height"
+		search=".onValueHelpSearchCus"
+		confirm=".onValueHelpCloseCus"
+		cancel=".onValueHelpCloseCus">
+		<StandardListItem
+			iconDensityAware="false"
+			iconInset="false"
+			title="{oCus>SOLD_TO}" />
+	</SelectDialog>
+</core:FragmentDefinition>

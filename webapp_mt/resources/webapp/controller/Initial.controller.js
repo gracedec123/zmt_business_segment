@@ -13,11 +13,13 @@ sap.ui.define([
 	],
 
 	function (Controller, Fragment, MessageToast, JSONModel, Filter, FilterOperator, jszip, xlsx, Sorter, UIComponent, Spreadsheet) {
+		//	MockServer, ODataModel) {
 		"use strict";
 
 		return Controller.extend("webapp.webapp.controller.Initial", {
 
 			onInit: function () {
+
 				var oColumn = this.getView().byId("hideColumn");
 				oColumn.setVisible(!oColumn.getVisible());
 				var oColumn2 = this.getView().byId("hideColumn2");
@@ -47,6 +49,9 @@ sap.ui.define([
 				this.getView().setModel(oDialogModel, "dialogModel");
 				var oUserModel = new JSONModel({});
 				this.getView().setModel(oUserModel, "oUserModel");
+				var oselectDialog = new JSONModel({});
+				this.getView().setModel(oselectDialog, "oselectDialog");
+				oselectDialog.setSizeLimit(100000);
 				var that = this;
 				$.ajax({
 					url: "/xsjs_crud/FetchUsernameDetails.xsjs",
@@ -59,21 +64,280 @@ sap.ui.define([
 						MessageToast.show("An error occurred while adding the record. Please try again later.");
 					}
 				});
-
 			},
+			onSync: function () {
+				this.getView().byId("idMKey").setValue("");
+				this.getView().byId("idMSign").setValue("");
+				this.getView().byId("idMcus").setValue("");
+				this.getView().byId("idMmat").setValue("");
+				this.getView().byId("idMtseg").setValue("");
+				this.getView().byId("idMcom").setValue("");
+				this.getView().byId("idMUsr").setValue("");
+				this.byId("comboBox1").setSelectedKey("");
+				this.getView().byId("idChdate").setValue("");
+				this.getView().byId("idCdate").setValue("");
+				this.getView().byId("Search").setValue("");
+				this.loadTableData();
+			},
+			onValueHelpKey: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogKey) {
+					this._pValueHelpDialogKey = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMKey",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogKey.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("MT_KEY", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchKey: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("MT_KEY", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseKey: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMKey").setValue(oSelectedItem.getTitle());
+			},	
+			onValueHelpUsr: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogUsr) {
+					this._pValueHelpDialogUsr = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMUsr",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogUsr.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("LAST_MODIFIED_USER", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchUsr: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("LAST_MODIFIED_USER", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseUsr: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMUsr").setValue(oSelectedItem.getTitle());
+			},
+			onValueHelpCus: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogCus) {
+					this._pValueHelpDialogCus = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMCus",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogCus.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("SOLD_TO", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchCus: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("SOLD_TO", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseCus: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMcus").setValue(oSelectedItem.getTitle());
+			},
+			onValueHelpMat: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogMat) {
+					this._pValueHelpDialogMat = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMMat",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogMat.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("MATNR", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchMat: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("MATNR", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseMat: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMmat").setValue(oSelectedItem.getTitle());
+			},
+			onValueHelpMtSeg: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogMtSeg) {
+					this._pValueHelpDialogMtSeg = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMtSeg",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogMtSeg.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("MARKET_SEG", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchMtSeg: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("MARKET_SEG", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseMtSeg: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMtseg").setValue(oSelectedItem.getTitle());
+			},
+			onValueHelpMCom: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogMCom) {
+					this._pValueHelpDialogMCom = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMCom",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogMCom.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("COMMENTS", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchCom: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("COMMENTS", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseCom: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMcom").setValue(oSelectedItem.getTitle());
+			},
+			onValueHelpSign: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialog) {
+					this._pValueHelpDialog = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMSign",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialog.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("MKT_SIGN", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearch: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("MKT_SIGN", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpClose: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+
+				if (!oSelectedItem) {
+					return;
+				}
+
+				this.byId("idMSign").setValue(oSelectedItem.getTitle());
+			},
+
 			onDataExport: function () {
+				var FArray = new Array();
 				var oTable = this.byId("tableId1");
 				var oTableModel = this.getView().getModel("tableModel");
 				var aData = oTableModel.getData();
+				var search = this.getView().byId("Search")._lastValue;
+				var ind = this.byId("tableId1").getBinding("items").aIndices;
+				if (search !== "") {
+					for (var i = 0; i < ind.length; i++) {
+						var j = ind[i];
+						FArray.push(aData[j]);
+					}
+				} else {
+					FArray = aData;
+				}
 				var aCols, oSettings, oSheet;
 				aCols = this.createColumnConfig();
 				oSettings = {
 					workbook: {
 						columns: aCols
 					},
-					dataSource: aData
+					dataSource: FArray
 				};
 				oSheet = new sap.ui.export.Spreadsheet(oSettings);
+				oSheet._mSettings.fileName = "MT Bussiness Segment";
 				oSheet.build().finally(function () {
 					oSheet.destroy();
 				});
@@ -86,23 +350,29 @@ sap.ui.define([
 					label: "Customer Sold-To (ID)",
 					property: "SOLD_TO"
 				}, {
-					label: "Customer Sold-To (Description)",
+					label: "Customer Sold-To (Desc)",
 					property: "SOLD_TO_DESC"
 				}, {
 					label: "Material ID",
 					property: "MATNR",
 					width: 20
 				}, { //hdonapar
-					label: "Material Description",
+					label: "Material Desc",
 					property: "MAKTX"
 				}, {
-					label: "MT Business Segment (ID)",
+					label: "MT Biz_Seg_ID",
 					property: "MT_SEG_ID"
 				}, {
-					label: "MT Business Segment (Desc)",
+					label: "MT Biz_Seg_Desc",
 					property: "MT_SEG_DESC"
 				}, {
-					label: "Market Segment",
+					label: "MT Biz_Seg_ID_SAP",
+					property: "MT_SEG_ID_SAP"
+				}, {
+					label: "MT Biz_Seg_Desc_SAP",
+					property: "MT_SEG_DESC_SAP"
+				}, {
+					label: "Marketing Segment",
 					property: "MARKET_SEG"
 				}, {
 					label: "Comments",
@@ -167,7 +437,7 @@ sap.ui.define([
 				var table = this.byId("tableId1");
 				var binding = table.getBinding("items");
 				this._bDescendingSort = !this._bDescendingSort;
-				var oSorter = new Sorter("MT_SEG_ID", this._bDescendingSort);
+				var oSorter = new Sorter("MT_SEG_ID_SAP", this._bDescendingSort);
 				binding.sort(oSorter);
 			},
 			onFilterMatx: function (oEvent) {
@@ -236,6 +506,77 @@ sap.ui.define([
 			},
 			onBackInitial: function () {
 				this.getRouter().navTo("RouteView2");
+			},
+			onSignSave: function () {
+			//	var oDialogModel = this.getView().getModel("dialogModel");
+			//	var oSign = oDialogModel.getData();
+				var busyDialog = new sap.m.BusyDialog();
+				var oTable = this.getView().byId("tableId1");
+				var oTableModel = this.getView().getModel("tableModel");
+				var aTableData = oTableModel.getData();
+				var items = oTable.getSelectedItems();
+				var that = this;
+				if (items.length === 0) {
+					MessageToast.show("Please Select Entries before Signoff");
+					that._oDialog.close();
+				} else {
+					for (var i = 0; i < items.length; i++) {
+
+						var data = items[i].getBindingContextPath();
+						var len = data.length;
+						var j = data.slice(1, len);
+
+						for (var key in aTableData[j]) {
+							if (typeof aTableData[j][key] === "number") {
+								aTableData[j][key] = aTableData[j][key].toString();
+							} else if (aTableData[j][key] === null) {
+								aTableData[j][key] = "";
+							}
+						}
+
+						aTableData[j].LAST_MODIFIED_USER = this.getView().getModel("oUserModel").getProperty("/userName");
+						aTableData[j].LAST_MODIFIED_TIMESTAMP = this.formatDateobjToBackendDateString(new Date());
+						aTableData[j].LAST_MODIFIED_TIMESTAMP = aTableData[j].LAST_MODIFIED_TIMESTAMP.slice(0, 10);
+						aTableData[j].MKT_SIGN = aTableData[j].LAST_MODIFIED_USER + '-' +
+						                         aTableData[j].LAST_MODIFIED_TIMESTAMP    //oSign.MKT_SIGN;
+						busyDialog.open();
+						$.ajax({
+							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
+							method: "PUT",
+							contentType: "application/json",
+							data: JSON.stringify(aTableData[j]),
+							success: function () {
+								that.loadTableData();
+								busyDialog.close();
+							//	that._oDialog.close();
+							}
+						});
+					}
+				}
+			},
+			onSignoff: function () {
+				if (!this._oDialog) {
+					Fragment.load({
+						id: this.getView().getId(),
+						name: "webapp.webapp.fragment.AddSignoff",
+						controller: this
+					}).then(function (oDialog) {
+						this._oDialog = oDialog;
+						this.getView().addDependent(this._oDialog);
+						this.getView().getModel("dialogModel").setData({});
+
+						this._oDialog.setModel(this.getView().getModel("dialogModel"));
+
+						this._oDialog.open();
+						this.getView().byId("ip10").focus();
+						this._oDialog.attachAfterClose(function () {
+							this._oDialog.destroy();
+							this._oDialog = null;
+						}.bind(this));
+					}.bind(this));
+				} else {
+					this._oDialog.open();
+				}
 			},
 			onTransfer: function () {
 				this.getRouter().navTo("RouteView4");
@@ -389,22 +730,53 @@ sap.ui.define([
 					}
 					var oEntry = {
 						Action: 'U',
-						MT_KEY: finalArray[i]["Customer Sold-To (ID)"] + finalArray[i]["Material ID"], //finalArray[i].LookUp,
+						MT_KEY: finalArray[i]["Material ID"] + finalArray[i]["Customer Sold-To (ID)"], //finalArray[i].LookUp,
 						SOLD_TO: finalArray[i]["Customer Sold-To (ID)"],
 						SOLD_TO_DESC: finalArray[i]["Customer Sold-To (Desc)"],
 						MATNR: finalArray[i]["Material ID"],
 						MAKTX: finalArray[i]["Material Desc"],
 						MT_SEG_ID: finalArray[i]["MT Biz_Seg_ID"],
 						MT_SEG_DESC: finalArray[i]["MT Biz_Seg_Desc"],
+						MT_SEG_ID_SAP: finalArray[i]["MT Biz_Seg_ID"],
+						MT_SEG_DESC_SAP: finalArray[i]["MT Biz_Seg_Desc"],
 						MARKET_SEG: finalArray[i]["Marketing Segment"],
 						COMMENTS: finalArray[i].Comments,
 						MKT_SIGN: finalArray[i]["Mkting Signoff"],
-						CREATED_ON: this.formatDateobjToBackendDateString(new Date()),
+						CREATED_ON: this.formatDateobjToBackendDateString(new Date()).slice(0, 10),
 						LAST_MODIFIED_USER: this.getView().getModel("oUserModel").getProperty("/userName"),
 						LAST_MODIFIED_TIMESTAMP: this.formatDateobjToBackendDateString(new Date()).slice(0, 10)
 					};
 					FArray.push(oEntry);
 				}
+				/*	for (var j = 0; j < FArray.length; j++) {
+						var numZeros = 18;
+						var num = FArray[j].MATNR;
+						var n = Math.abs(num);
+						var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+						var zeroString = Math.pow(10, zeros).toString().substr(1);
+						if (num < 0) {
+							zeroString = '-' + zeroString;
+						}
+						num = zeroString + n;
+						var datavalue = JSON.stringify(num);
+						$.ajax({
+							url: "/xsjs_crud/FetchMM.xsjs",
+							method: "GET",
+							contentType: "application/json",
+							data: ({
+								dataobject: datavalue
+							}),
+							success: function (data) {
+								data = data.map(function (item) {
+									return item;
+								});
+								FArray[j].MT_SEG_ID_SAP = data[0].MVGR4;
+								FArray[j].MT_SEG_DESC_SAP = data[0].BEZEI;
+							}
+						})
+
+					}*/
+
 				oTableModel.setData(FArray);
 				busyDialog.close();
 			},
@@ -467,6 +839,8 @@ sap.ui.define([
 							MAKTX: aTableData[i].MAKTX,
 							MT_SEG_ID: aTableData[i].MT_SEG_ID,
 							MT_SEG_DESC: aTableData[i].MT_SEG_DESC,
+							MT_SEG_ID_SAP: aTableData[i].MT_SEG_ID_SAP,
+							MT_SEG_DESC_SAP: aTableData[i].MT_SEG_DESC_SAP,
 							MARKET_SEG: aTableData[i].MARKET_SEG,
 							COMMENTS: aTableData[i].COMMENTS,
 							MKT_SIGN: aTableData[i].MKT_SIGN,
@@ -474,9 +848,33 @@ sap.ui.define([
 							LAST_MODIFIED_USER: that.getView().getModel("oUserModel").getProperty("/userName"),
 							LAST_MODIFIED_TIMESTAMP: that.formatDateobjToBackendDateString(new Date()).slice(0, 10)
 						};
+
+						/*	var numZeros = 18;
+							var num = oEntry.MATNR;
+							var n = Math.abs(num);
+							var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+							var zeroString = Math.pow(10, zeros).toString().substr(1);
+							if (num < 0) {
+								zeroString = '-' + zeroString;
+							}
+							num = zeroString + n;
+							var datavalue = JSON.stringify(num);
+							$.ajax({
+								url: "/xsjs_crud/FetchMM.xsjs",
+								method: "GET",
+								contentType: "application/json",
+								data: ({
+									dataobject: datavalue
+								}),
+								success: function (data) {
+									data = data.map(function (item) {
+										return item;
+									});
+									oEntry.MT_SEG_ID_SAP = data[0].MVGR4;
+									oEntry.MT_SEG_DESC_SAP = data[0].BEZEI;*/
 						$.ajax({
 							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
-							method: "POST",
+							method: "PUT",
 							contentType: "application/json",
 							data: JSON.stringify(oEntry),
 							success: function () {
@@ -484,12 +882,24 @@ sap.ui.define([
 								busyDialog.close();
 							}
 						});
+						//		}
+						//	})
+
 					}
 				}
 			},
 			onFilter: function () {
 				var busyDialog = new sap.m.BusyDialog();
 				busyDialog.open();
+				var Msign = this.getView().byId("idMSign").mProperties.value;
+				var Mkey = this.getView().byId("idMKey").mProperties.value;
+				var Mcus = this.getView().byId("idMcus").mProperties.value;
+				var Mmat = this.getView().byId("idMmat").mProperties.value;
+				var MtSeg = this.getView().byId("idMtseg").mProperties.value;
+				var Mcom = this.getView().byId("idMcom").mProperties.value;
+				var Musr = this.getView().byId("idMUsr").mProperties.value;
+				var oCombo = this.byId("comboBox1");
+				var Mseg = oCombo.getSelectedKey();
 				var lCdatef = this.getView().byId("idCdate").getDateValue(); //this.CdateFrom;
 				if (lCdatef) {
 					var lCdatef2 = lCdatef.toLocaleString().split(',');
@@ -510,8 +920,6 @@ sap.ui.define([
 					var lChdatet2 = lChdatet.toLocaleString().split(",");
 					lChdatet = lChdatet2[0];
 				}
-				this.getView().byId("idCdate").setValue('');
-				this.getView().byId("idChdate").setValue('');
 
 				function date_con(date) {
 					date = date.split("/");
@@ -530,17 +938,38 @@ sap.ui.define([
 				if (lChdatet) {
 					lChdatet = date_con(lChdatet);
 				}
+				//this.getView().byId("idCdate").setValueState("None")
+				//this.getView().byId("idChdate").setValueState("None")
 				if (lCdatef === null &&
 					lCdatet === null &&
-					lChdatef === null && lChdatet === null) {
+					lChdatef === null && 
+					lChdatet === null && 
+					(Msign === null || Msign === "") && 
+					(Mseg === null || Mseg === "") && 
+					Mkey === null &&
+					Mcus === null &&
+					Mmat === null &&
+					MtSeg === null &&
+					Mcom === null &&
+					Musr === null) {
 					this.loadTableData();
+					//this.getView().byId("idCdate").setValueState("Error")
+					//this.getView().byId("idChdate").setValueState("Error")
 					busyDialog.close();
 				} else {
 					var oEntry = {
 						CREATEDF: lCdatef,
 						CREATEDT: lCdatet,
 						CHANGEDF: lChdatef,
-						CHANGEDT: lChdatet
+						CHANGEDT: lChdatet,
+						MTKEY: Mkey,
+						MTCUS: Mcus,
+						MTMAT: Mmat,
+						MTSEG: MtSeg,
+						MTCOM: Mcom,
+						MTUSR: Musr,
+						MSIGNOFF: Msign,
+						MSEGMENT: Mseg
 					};
 					var oTableModel = new JSONModel();
 					this.getView().setModel(oTableModel, "tableModel");
@@ -573,6 +1002,20 @@ sap.ui.define([
 				var oTableModel = new JSONModel();
 				var busyDialog = new sap.m.BusyDialog();
 				busyDialog.open();
+				var oTable = new JSONModel();
+				this.getView().setModel(oTable, "oTable");
+				var oSign = new JSONModel();
+				this.getView().setModel(oSign, "oSign");
+				var oCus = new JSONModel();
+				this.getView().setModel(oCus, "oCus");
+				var oMat = new JSONModel();
+				this.getView().setModel(oMat, "oMat");
+				var oMtSeg = new JSONModel();
+				this.getView().setModel(oMtSeg, "oMtSeg");
+				var oCom = new JSONModel();
+				this.getView().setModel(oCom, "oCom");
+				var oUsr = new JSONModel();
+				this.getView().setModel(oUsr, "oUsr");
 				this.getView().setModel(oTableModel, "tableModel");
 				$.ajax({
 					url: "/xsjs_crud/FetchInitial.xsjs",
@@ -585,42 +1028,89 @@ sap.ui.define([
 							data[i].LAST_MODIFIED_TIMESTAMP = data[i].LAST_MODIFIED_TIMESTAMP.slice(0, 10);
 							data[i].CREATED_ON = data[i].CREATED_ON.slice(0, 10);
 						}
-						/*	$.ajax({
-								url: "/xsjs_crud/FetchMM.xsjs",
-								method: "GET",
-								success: function (dataMM) {
-									dataMM = dataMM.map(function (item) {
-										return item;
-									});
-									/*	for (var i = 0; i < data.length; i++) {
-											data[i].LAST_MODIFIED_TIMESTAMP = data[i].LAST_MODIFIED_TIMESTAMP.slice(0, 10);
-											data[i].CREATED_ON = data[i].CREATED_ON.slice(0, 10);
 
-											var numZeros = 18;
-											var num = data[i].MATNR;
-											var n = Math.abs(num);
-											var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
-											var zeroString = Math.pow(10, zeros).toString().substr(1);
-											if (num < 0) {
-												zeroString = '-' + zeroString;
-											}
-											num = zeroString + n;
-											var j = dataMM.findIndex(item => item.MATNR === num);
-											if (num === dataMM[j].MATNR) {
-												data[i].MT_SEG_ID_SAP = dataMM[j].MVGR4;
-												data[i].MT_SEG_DESC_SAP = dataMM[j].BEZEI;
-											}
-										}
-									var len = data.length;
-									oPtions.setSizeLimit(len);
-									oTableModel.setData(data);
-									busyDialog.close();
-								}
-							});*/
 						oTableModel.setData(data);
+						oTable.setData(data);
+						var aTable = oTable.oData;
+						var SignArray = new Array();
+						var CusArray = new Array();
+						var MatArray = new Array();
+						var MtSegArray = new Array();
+						var ComArray = new Array();
+						var UsrArray = new Array();
+						var oASign = new Array();
+						var oACus = new Array();
+						var oAMat = new Array();
+						var oAMtSeg = new Array();
+						var oACom = new Array();
+						var oAUsr = new Array();
+						for (var i = 0; i < aTable.length; i++) {
+							if (oASign.indexOf(aTable[i].MKT_SIGN) === -1) {
+								var oEntry = {
+									MKT_SIGN: aTable[i].MKT_SIGN
+								}
+								oASign.push(aTable[i].MKT_SIGN);
+								SignArray.push(oEntry);
+							}
+							if (oACus.indexOf(aTable[i].SOLD_TO) === -1) {
+								var oEntry_cus = {
+									SOLD_TO: aTable[i].SOLD_TO
+								}
+								oACus.push(aTable[i].SOLD_TO);
+								CusArray.push(oEntry_cus);
+							}
+							if (oAMat.indexOf(aTable[i].MATNR) === -1) {
+								var oEntry_Mat = {
+									MATNR: aTable[i].MATNR
+								}
+								oAMat.push(aTable[i].MATNR);
+								MatArray.push(oEntry_Mat);
+							}
+							if (oAMtSeg.indexOf(aTable[i].MARKET_SEG) === -1) {
+								var oEntry_MtSeg = {
+									MARKET_SEG: aTable[i].MARKET_SEG
+								}
+								oAMtSeg.push(aTable[i].MARKET_SEG);
+								MtSegArray.push(oEntry_MtSeg);
+							}
+							if (oACom.indexOf(aTable[i].COMMENTS) === -1) {
+								var oEntry_Com = {
+									COMMENTS: aTable[i].COMMENTS
+								}
+								oACom.push(aTable[i].COMMENTS);
+								ComArray.push(oEntry_Com);
+							}
+							if (oAUsr.indexOf(aTable[i].LAST_MODIFIED_USER) === -1) {
+								var oEntry_Usr = {
+									LAST_MODIFIED_USER: aTable[i].LAST_MODIFIED_USER
+								}
+								oAUsr.push(aTable[i].LAST_MODIFIED_USER);
+								UsrArray.push(oEntry_Usr);
+							}
+						}
+						oSign.setData(SignArray);
+						oCus.setData(CusArray);
+						oMat.setData(MatArray);
+						oMtSeg.setData(MtSegArray);
+						oCom.setData(ComArray);
+						oUsr.setData(UsrArray);
 						busyDialog.close();
 					}
 				});
+				var oMTSeg = new JSONModel();
+				this.getView().setModel(oMTSeg, "oMTSeg");
+				$.ajax({
+					url: "/xsjs_crud/FetchMT.xsjs",
+					method: "GET",
+					success: function (dataMM) {
+						dataMM = dataMM.map(function (item) {
+							return item;
+						});
+						var len = dataMM.length;
+						oMTSeg.setSizeLimit(len);
+						oMTSeg.setData(dataMM);
+					}
+				})
 			},
 
 			onCancel: function () {
@@ -650,85 +1140,74 @@ sap.ui.define([
 					this.oOriginalItem.MT_SEG_ID = "53D";
 				} else {
 					var datavalue = JSON.stringify(num);
+					var datavalue1 = JSON.stringify(that.oOriginalItem.MT_SEG_ID);
 					$.ajax({
-						url: "/xsjs_crud/FetchMM.xsjs",
+						url: "/xsjs_crud/FetchProfit.xsjs",
 						method: "GET",
 						contentType: "application/json",
 						data: ({
-							dataobject: datavalue
+							dataobject: datavalue1
 						}),
-						success: function (data) {
-							data = data.map(function (item) {
+						success: function (dataPro) {
+							dataPro = dataPro.map(function (item) {
 								return item;
 							});
-							var datavalue1 = JSON.stringify(that.oOriginalItem.MT_SEG_ID);
+							var datavalue2 = JSON.stringify(dataPro[0].PROFIT);
 							$.ajax({
-								url: "/xsjs_crud/FetchProfit.xsjs",
+								url: "/xsjs_crud/FetchSegCombo.xsjs",
 								method: "GET",
 								contentType: "application/json",
 								data: ({
-									dataobject: datavalue1
+									dataobject: datavalue2
 								}),
-								success: function (dataPro) {
-									dataPro = dataPro.map(function (item) {
+								success: function (dataCombo) {
+									dataCombo = dataCombo.map(function (item) {
 										return item;
 									});
-									var datavalue2 = JSON.stringify(dataPro[0].PROFIT);
-									$.ajax({
-										url: "/xsjs_crud/FetchSegCombo.xsjs",
-										method: "GET",
-										contentType: "application/json",
-										data: ({
-											dataobject: datavalue2
-										}),
-										success: function (dataCombo) {
-											dataCombo = dataCombo.map(function (item) {
-												return item;
-											});
-											var len = dataCombo.length;
-											oPtions.setSizeLimit(len);
-											var idx = dataCombo.findIndex(item => item.MT_ID === "XXX");
+									var len = dataCombo.length;
+									oPtions.setSizeLimit(len);
+									/*		var idx = dataCombo.findIndex(item => item.MT_ID === "XXX");
 											if (idx > 0) {
 												dataCombo[idx].MT_DESC = "No Default Segment";
-											}
-											oPtions.setData(dataCombo);
-										}
-									});
+											}*/
+									oPtions.setData(dataCombo);
 								}
-
 							});
-							if (that.oOriginalItem.SOLD_TO === "853379" && that.oOriginalItem.MATNR === "5174890") {
-								that.oOriginalItem.MT_SEG_ID = "XXX";
-								that.oOriginalItem.MT_SEG_ID_DESC = "No Default Segment";
-							}
-							that.oOriginalItem.MT_SEG_ID_SAP = data[0].MVGR4 + ' ' + data[0].BEZEI;
-
-							if (!that._oDialog) {
-								Fragment.load({
-									id: that.getView().getId(),
-									name: "webapp.webapp.fragment.UpdateItemDialog",
-									controller: that
-								}).then(function (oDialog) {
-									that._oDialog = oDialog;
-									that.getView().addDependent(that._oDialog);
-
-									if (!that._oDialog.getModel()) {
-										that._oDialog.setModel(that.getView().getModel("dialogModel"));
-									}
-									that._oDialog.open();
-									that.byId("comboBox").setSelectedKey(that.oOriginalItem.MT_SEG_ID);
-									that._oDialog.attachAfterClose(function () {
-										that._oDialog.destroy();
-										that._oDialog = null;
-									}.bind(that));
-								}.bind(that));
-							} else {
-								this._oDialog.open();
-							}
-
-							busyDialog.close();
 						}
+
 					});
+					/*	if (that.oOriginalItem.SOLD_TO === "853379" && that.oOriginalItem.MATNR === "5174890") {
+							that.oOriginalItem.MT_SEG_ID = "XXX";
+							that.oOriginalItem.MT_SEG_ID_DESC = "No Default Segment";
+						}*/
+					//	that.oOriginalItem.MT_SEG_ID_SAP = data[0].MVGR4 + ' ' + data[0].BEZEI;
+
+					if (!that._oDialog) {
+						Fragment.load({
+							id: that.getView().getId(),
+							name: "webapp.webapp.fragment.UpdateItemDialog",
+							controller: that
+						}).then(function (oDialog) {
+							that._oDialog = oDialog;
+							that.getView().addDependent(that._oDialog);
+
+							if (!that._oDialog.getModel()) {
+								that._oDialog.setModel(that.getView().getModel("dialogModel"));
+							}
+							that._oDialog.open();
+							that.byId("comboBox").setSelectedKey(that.oOriginalItem.MT_SEG_ID);
+							that._oDialog.attachAfterClose(function () {
+								that._oDialog.destroy();
+								that._oDialog = null;
+							}.bind(that));
+						}.bind(that));
+					} else {
+						this._oDialog.open();
+					}
+
+					busyDialog.close();
+					//		}
+					//	});
 				}
 			},
 			onUpdate: function () {
@@ -740,8 +1219,8 @@ sap.ui.define([
 				var len = oCombo.mProperties.value.length;
 				var len_desc = oUpdatedItem.MT_SEG_ID_SAP.length;
 				var oText = oCombo.mProperties.value.slice(4, len);
-				oUpdatedItem.MT_SEG_ID_SAP = oUpdatedItem.MT_SEG_ID_SAP.slice(0, 3);
-				oUpdatedItem.MT_SEG_DESC_SAP = oUpdatedItem.MT_SEG_ID_SAP.slice(4, len_desc);
+				//	oUpdatedItem.MT_SEG_ID_SAP = oUpdatedItem.MT_SEG_ID_SAP.slice(0, 3);
+				//	oUpdatedItem.MT_SEG_DESC_SAP = oUpdatedItem.MT_SEG_ID_SAP.slice(4, len_desc);
 				oUpdatedItem.MT_SEG_ID = oKey;
 				oUpdatedItem.MT_SEG_DESC = oText;
 				if (!oUpdatedItem.MT_KEY || !oUpdatedItem.SOLD_TO || !oUpdatedItem.SOLD_TO_DESC || !oUpdatedItem.MATNR || !oUpdatedItem.MAKTX ||
@@ -804,9 +1283,11 @@ sap.ui.define([
 						new Filter("SOLD_TO_DESC", FilterOperator.Contains, searchTerm),
 						new Filter("MATNR", FilterOperator.Contains, searchTerm),
 						new Filter("MAKTX", FilterOperator.Contains, searchTerm),
-						new Filter("MT_SEG_ID", FilterOperator.Contains, searchTerm),
-						new Filter("MT_SEG_DESC", FilterOperator.Contains, searchTerm),
-						new Filter("MARKET_SEG", FilterOperator.Contains, searchTerm)
+						//	new Filter("MT_SEG_ID", FilterOperator.Contains, searchTerm),
+						//	new Filter("MT_SEG_DESC", FilterOperator.Contains, searchTerm),
+						new Filter("MARKET_SEG", FilterOperator.Contains, searchTerm),
+						new Filter("COMMENTS", FilterOperator.Contains, searchTerm)
+						//	new Filter("MKT_SIGN", FilterOperator.Contains, searchTerm)
 					], false);
 					binding.filter([oFilterArr]);
 				}
@@ -818,6 +1299,7 @@ sap.ui.define([
 				var oTableModel = this.getView().getModel("tableModel");
 				var aTableData = oTableModel.getData();
 				var items = oTable.getSelectedItems();
+				var that = this;
 				sap.m.MessageBox.confirm("Are you sure you want to delete this record?", {
 					title: "Confirmation",
 					onClose: function (oAction) {
@@ -826,26 +1308,29 @@ sap.ui.define([
 								var data = items[i].getBindingContextPath();
 								var len = data.length;
 								var j = data.slice(1, len);
+								var oEntry = aTableData[j];
+								aTableData.splice(j, 1);
+								oTableModel.refresh(true);
 								busyDialog.open();
 								if (j !== -1) {
 									$.ajax({
 										url: "/xsjs_crud/CUDInitial.xsjs?cmd=delete",
 										method: "DELETE",
 										contentType: "application/json",
-										data: JSON.stringify(aTableData[j]),
+										data: JSON.stringify(oEntry),
 										success: function () {
-											aTableData.splice(j, 1);
-											oTableModel.refresh(true);
+											//	that.loadTableData();
+											busyDialog.close();
+											/*	aTableData.splice(j, 1);
+												oTableModel.refresh(true);*/
 											for (var s = 0; s < items.length; s++) {
 												items[s].setSelected(false);
-												oTableModel.refresh();
 											}
-											
+											oTableModel.refresh();
 										}
 									});
 								}
 							}
-									busyDialog.close();
 						}
 					}
 				});

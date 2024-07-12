@@ -7,10 +7,11 @@ sap.ui.define([
 		"sap/ui/model/FilterOperator",
 		"webapp/webapp/view/jszip",
 		"webapp/webapp/view/xlsx",
-		"sap/ui/core/UIComponent"
+		"sap/ui/core/UIComponent",
+		"sap/ui/model/Sorter"
 	],
 
-	function (Controller, Fragment, MessageToast, JSONModel, Filter, FilterOperator, jszip, xlsx, UIComponent) {
+	function (Controller, Fragment, MessageToast, JSONModel, Filter, FilterOperator, jszip, xlsx, UIComponent, Sorter) {
 		"use strict";
 
 		return Controller.extend("webapp.webapp.controller.MTView", {
@@ -67,6 +68,34 @@ sap.ui.define([
 					};
 					reader.readAsBinaryString(file);
 				}
+			},
+			onFilterMTid: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MT_ID", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMTDesc: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MT_DESC", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMTsec: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MT_SEG", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMTpc: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("PROFIT", this._bDescendingSort);
+				binding.sort(oSorter);
 			},
 			onSearch: function (event) {
 				var searchTerm = event.getParameter("query");

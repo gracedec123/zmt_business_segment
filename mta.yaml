@@ -2,11 +2,11 @@ ID: zmt_business_segment
 _schema-version: '2.1'
 version: 0.0.1
 modules:
-  - name: db
+  - name: db_mt
     type: hdb
-    path: db
+    path: db_mt
     requires:
-      - name: hdi_db
+      - name: hdi_db_mt
         properties:
           TARGET_CONTAINER: '~{hdi-container-name}'
       - name: cross-container-service-1
@@ -14,22 +14,22 @@ modules:
         properties:
           key: ServiceName_1
           service: '~{the-service-name}'
-  - name: xsjs
+  - name: xsjs_mt
     type: nodejs
-    path: xsjs
+    path: xsjs_mt
     provides:
       - name: xsjs_api
         properties:
           url: '${default-url}'
     requires:
-      - name: UAA-service
-      - name: hdi_db
-      - name: db
-  - name: webapp
+      - name: hdi_db_mt
+      - name: UAA-service_mt
+      - name: db_mt
+  - name: webapp_mt
     type: html5
-    path: webapp
+    path: webapp_mt
     requires:
-      - name: UAA-service
+      - name: UAA-service_mt
       - name: xsjs_api
         group: destinations
         properties:
@@ -37,17 +37,18 @@ modules:
           url: '~{url}'
           forwardAuthToken: true
 resources:
-  - name: hdi_db
+  - name: hdi_db_mt
     properties:
       hdi-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
     parameters:
-      config: ComplexType
+      config:
+        schema: ZMT_Business
   - name: cross-container-service-1
     parameters:
       service-name: CUPS_ECC
     properties:
       the-service-name: '${service-name}'
     type: org.cloudfoundry.existing-service
-  - name: UAA-service
+  - name: UAA-service_mt
     type: com.sap.xs.uaa-space

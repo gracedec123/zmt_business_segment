@@ -55,6 +55,17 @@
 				"sap.ui.export": {}
 			}
 		},
+		
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"ValueHelpDialog.fragment.xml",
+					"manifest.json"
+				]
+			}
+		},
 		"contentDensities": {
 			"compact": true,
 			"cozy": true

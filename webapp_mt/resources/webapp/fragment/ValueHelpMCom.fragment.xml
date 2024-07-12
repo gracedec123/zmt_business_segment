@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectDialogCom"
+		title="{i18n>Comments}"
+		items="{oCom>/}"
+		class="F4height"
+		search=".onValueHelpSearchCom"
+		confirm=".onValueHelpCloseCom"
+		cancel=".onValueHelpCloseCom">
+		<StandardListItem
+			iconDensityAware="false"
+			iconInset="false"
+			title="{oCom>COMMENTS}" />
+	</SelectDialog>
+</core:FragmentDefinition>

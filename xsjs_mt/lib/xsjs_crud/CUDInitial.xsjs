@@ -46,60 +46,61 @@ try {
 
 async function insertUpdateInitial(data) {
 	// Use parameterized queries to prevent SQL injection
-	var query = 'UPSERT "ZMT_Initial_data" VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE "MT_KEY" = ?';
-	var pstmt = await conn.prepareStatement(query);
+		var query = 'UPSERT "ZMT_Initial_data" VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE "MT_KEY" = ?';
+	//	var query = 'UPDATE "ZMT_Initial_data" SET "COMMENTS" = ?, "MKT_SIGN" = ? WHERE "MT_KEY" = ?';
+		var pstmt = await conn.prepareStatement(query);
 
-	pstmt.setString(1, data.MT_KEY);
-	if (data.SOLD_TO != "") {
-		pstmt.setString(2, data.SOLD_TO);
-	};
-	if (data.SOLD_TO_DESC != "") {
-		pstmt.setString(3, data.SOLD_TO_DESC);
-	};
-	if (data.MATNR != "") {
-		pstmt.setString(4, data.MATNR);
-	};
-	if (data.MAKTX != "") {
-		pstmt.setString(5, data.MAKTX);
-	};
-	if (data.MT_SEG_ID != "") {
-		pstmt.setString(6, data.MT_SEG_ID);
-	};
-	if (data.MT_SEG_DESC != "") {
-		pstmt.setString(7, data.MT_SEG_DESC);
-	};
-	if (data.MT_SEG_ID_SAP != "") {
-		pstmt.setString(8, data.MT_SEG_ID_SAP);
-	};
-	if (data.MT_SEG_DESC_SAP != "") {
-		pstmt.setString(9, data.MT_SEG_DESC_SAP);
-	};
-	if (data.MARKET_SEG != "") {
-		pstmt.setString(10, data.MARKET_SEG);
-	};
-	if (data.COMMENTS != "") {
-		pstmt.setString(11, data.COMMENTS);
-	};
-	if (data.MKT_SIGN != "") {
-		pstmt.setString(12, data.MKT_SIGN);
-	};
-	if (data.CREATED_ON != "") {
-		pstmt.setString(13, data.CREATED_ON);
-	};
-	if (data.LAST_MODIFIED_USER != "") {
-		pstmt.setString(14, data.LAST_MODIFIED_USER);
-	};
-	if (data.LAST_MODIFIED_TIMESTAMP != "") {
-		pstmt.setString(15, data.LAST_MODIFIED_TIMESTAMP);
-	};
-	pstmt.setString(16, data.MT_KEY);
+		pstmt.setString(1, data.MT_KEY);
+		if (data.SOLD_TO != "") {
+			pstmt.setString(2, data.SOLD_TO);
+		};
+		if (data.SOLD_TO_DESC != "") {
+			pstmt.setString(3, data.SOLD_TO_DESC);
+		};
+		if (data.MATNR != "") {
+			pstmt.setString(4, data.MATNR);
+		};
+		if (data.MAKTX != "") {
+			pstmt.setString(5, data.MAKTX);
+		};
+		if (data.MT_SEG_ID != "") {
+			pstmt.setString(6, data.MT_SEG_ID);
+		};
+		if (data.MT_SEG_DESC != "") {
+			pstmt.setString(7, data.MT_SEG_DESC);
+		};
+		if (data.MT_SEG_ID_SAP != "") {
+			pstmt.setString(8, data.MT_SEG_ID_SAP);
+		};
+		if (data.MT_SEG_DESC_SAP != "") {
+			pstmt.setString(9, data.MT_SEG_DESC_SAP);
+		};
+		if (data.MARKET_SEG != "") {
+			pstmt.setString(10, data.MARKET_SEG);
+		};
+		if (data.COMMENTS != "") {
+			pstmt.setString(11, data.COMMENTS);
+		};
+		if (data.MKT_SIGN != "") {
+			pstmt.setString(12, data.MKT_SIGN);
+		};
+		if (data.CREATED_ON != "") {
+			pstmt.setString(13, data.CREATED_ON);
+		};
+		if (data.LAST_MODIFIED_USER != "") {
+			pstmt.setString(14, data.LAST_MODIFIED_USER);
+		};
+		if (data.LAST_MODIFIED_TIMESTAMP != "") {
+			pstmt.setString(15, data.LAST_MODIFIED_TIMESTAMP);
+		};
+		pstmt.setString(16, data.MT_KEY);
 
 	// Execute the prepared statement
-	await pstmt.execute();
-	$.response.status = $.net.http.OK;
-	$.response.setBody(JSON.stringify({
-		success: true
-	}));
+		await pstmt.execute();
+		$.response.status = $.net.http.OK;
+		$.response.setBody(JSON.stringify({
+			success: true
+		}));
 }
 async function insertUpdateSave(dataArray) {
 	// Use parameterized queries to prevent SQL injection
@@ -132,7 +133,7 @@ async function insertUpdateSave(dataArray) {
 			success: true
 		};
 	} catch (error) {
-		conn.rollback(); 
+		conn.rollback();
 		throw error;
 	} finally {
 		pstmt.close();

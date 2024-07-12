@@ -7,7 +7,7 @@
   "devDependencies": {},
   "files": [],
   "main": "server.js",
-  "name": "xsjs",
+  "name": "xsjs_mt",
   "scripts": {
     "start": "node --experimental-vm-modules server.js",
     "test": "echo Tests not available with async-xsjs"

@@ -178,6 +178,39 @@ sap.ui.define([
 				}
 				this.byId("idMcus").setValue(oSelectedItem.getTitle());
 			},
+			onValueHelpCusDesc: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogCusDesc) {
+					this._pValueHelpDialogCusDesc = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMCusDesc",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogCusDesc.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("SOLD_TO_DESC", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchCusDesc: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("SOLD_TO_DESC", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseCusDesc: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMcusDesc").setValue(oSelectedItem.getTitle());
+			},
 			onValueHelpMat: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
 					oView = this.getView();
@@ -210,6 +243,39 @@ sap.ui.define([
 					return;
 				}
 				this.byId("idMmat").setValue(oSelectedItem.getTitle());
+			},
+				onValueHelpMatDesc: function (oEvent) {
+				var sInputValue = oEvent.getSource().getValue(),
+					oView = this.getView();
+				if (!this._pValueHelpDialogMatDesc) {
+					this._pValueHelpDialogMatDesc = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.ValueHelpMMatDesc",
+						controller: this
+					}).then(function (oDialog) {
+						oView.addDependent(oDialog);
+						return oDialog;
+					});
+				}
+				this._pValueHelpDialogMatDesc.then(function (oDialog) {
+					oDialog.getBinding("items").filter([new Filter("MAKTX", FilterOperator.Contains, sInputValue)]);
+					oDialog.open(sInputValue);
+				});
+			},
+
+			onValueHelpSearchMatDesc: function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("MAKTX", FilterOperator.Contains, sValue);
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+			},
+
+			onValueHelpCloseMatDesc: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem");
+				oEvent.getSource().getBinding("items").filter([]);
+				if (!oSelectedItem) {
+					return;
+				}
+				this.byId("idMmatDesc").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMtSeg: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -895,6 +961,8 @@ sap.ui.define([
 				var Mkey = this.getView().byId("idMKey").mProperties.value;
 				var Mcus = this.getView().byId("idMcus").mProperties.value;
 				var Mmat = this.getView().byId("idMmat").mProperties.value;
+				var McusDesc = this.getView().byId("idMcusDesc").mProperties.value;
+				var MmatDesc = this.getView().byId("idMmatDesc").mProperties.value;
 				var MtSeg = this.getView().byId("idMtseg").mProperties.value;
 				var Mcom = this.getView().byId("idMcom").mProperties.value;
 				var Musr = this.getView().byId("idMUsr").mProperties.value;
@@ -965,6 +1033,8 @@ sap.ui.define([
 						MTKEY: Mkey,
 						MTCUS: Mcus,
 						MTMAT: Mmat,
+						MTCUSDESC: McusDesc,
+						MTMATDESC: MmatDesc,
 						MTSEG: MtSeg,
 						MTCOM: Mcom,
 						MTUSR: Musr,
@@ -1008,8 +1078,12 @@ sap.ui.define([
 				this.getView().setModel(oSign, "oSign");
 				var oCus = new JSONModel();
 				this.getView().setModel(oCus, "oCus");
+				var oCusDesc = new JSONModel();
+				this.getView().setModel(oCusDesc, "oCusDesc");
 				var oMat = new JSONModel();
 				this.getView().setModel(oMat, "oMat");
+				var oMatDesc = new JSONModel();
+				this.getView().setModel(oMatDesc, "oMatDesc");
 				var oMtSeg = new JSONModel();
 				this.getView().setModel(oMtSeg, "oMtSeg");
 				var oCom = new JSONModel();
@@ -1034,13 +1108,17 @@ sap.ui.define([
 						var aTable = oTable.oData;
 						var SignArray = new Array();
 						var CusArray = new Array();
+						var CusDescArray = new Array();
 						var MatArray = new Array();
+						var MatDescArray = new Array();
 						var MtSegArray = new Array();
 						var ComArray = new Array();
 						var UsrArray = new Array();
 						var oASign = new Array();
 						var oACus = new Array();
+						var oACusDesc = new Array();
 						var oAMat = new Array();
+						var oAMatDesc = new Array();
 						var oAMtSeg = new Array();
 						var oACom = new Array();
 						var oAUsr = new Array();
@@ -1059,12 +1137,26 @@ sap.ui.define([
 								oACus.push(aTable[i].SOLD_TO);
 								CusArray.push(oEntry_cus);
 							}
+							if (oACusDesc.indexOf(aTable[i].SOLD_TO_DESC) === -1) {
+								var oEntry_cusDesc = {
+									SOLD_TO_DESC: aTable[i].SOLD_TO_DESC
+								}
+								oACusDesc.push(aTable[i].SOLD_TO_DESC);
+								CusDescArray.push(oEntry_cusDesc);
+							}
 							if (oAMat.indexOf(aTable[i].MATNR) === -1) {
 								var oEntry_Mat = {
 									MATNR: aTable[i].MATNR
 								}
 								oAMat.push(aTable[i].MATNR);
 								MatArray.push(oEntry_Mat);
+							}
+							if (oAMatDesc.indexOf(aTable[i].MAKTX) === -1) {
+								var oEntry_MatDesc = {
+									MAKTX: aTable[i].MAKTX
+								}
+								oAMatDesc.push(aTable[i].MAKTX);
+								MatDescArray.push(oEntry_MatDesc);
 							}
 							if (oAMtSeg.indexOf(aTable[i].MARKET_SEG) === -1) {
 								var oEntry_MtSeg = {
@@ -1090,7 +1182,9 @@ sap.ui.define([
 						}
 						oSign.setData(SignArray);
 						oCus.setData(CusArray);
+						oCusDesc.setData(CusDescArray);
 						oMat.setData(MatArray);
+						oMatDesc.setData(MatDescArray);
 						oMtSeg.setData(MtSegArray);
 						oCom.setData(ComArray);
 						oUsr.setData(UsrArray);

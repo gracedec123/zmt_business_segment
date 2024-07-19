@@ -26,11 +26,29 @@
 									</Input>
 								</fb:control>
 							</fb:FilterGroupItem>
+							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldToDesc" label="Customer Sold-To Desc." labelTooltip="Customer Sold-To Desc.">
+								<fb:control>
+									<Input id="idMcusDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCusDesc" showSuggestion="true" suggestionItems="{oCusDesc>/}">
+										<suggestionItems>
+											<core:Item text="{oCusDesc>SOLD_TO_DESC}"/>
+										</suggestionItems>
+									</Input>
+								</fb:control>
+							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material" label="Material ID" labelTooltip="Material ID">
 								<fb:control>
 									<Input id="idMmat" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMat" showSuggestion="true" suggestionItems="{oMat>/}">
 										<suggestionItems>
 											<core:Item text="{oMat>MATNR}"/>
+										</suggestionItems>
+									</Input>
+								</fb:control>
+							</fb:FilterGroupItem>
+							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material Desc" label="Material Desc." labelTooltip="Material Desc">
+								<fb:control>
+									<Input id="idMmatDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMatDesc" showSuggestion="true" suggestionItems="{oMatDesc>/}">
+										<suggestionItems>
+											<core:Item text="{oMatDesc>MAKTX}"/>
 										</suggestionItems>
 									</Input>
 								</fb:control>

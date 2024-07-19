@@ -7,6 +7,8 @@ var cdatet = data.CREATEDT;
 var key = data.MTKEY;
 var cus = data.MTCUS;
 var mat = data.MTMAT;
+var cusDesc = data.MTCUSDESC;
+var matDesc = data.MTMATDESC;
 var mtSeg = data.MTSEG;
 var com = data.MTCOM;
 var usr = data.MTUSR;                         
@@ -34,6 +36,14 @@ if (mat && mat !== '') {
 	baseQuery += ' AND "MATNR" = ?';
 	queryParams.push(mat);
 }
+if (cusDesc && cusDesc !== '') {
+	baseQuery += ' AND TO_VARCHAR("SOLD_TO_DESC") = ?';
+	queryParams.push(cusDesc);
+}
+if (matDesc && matDesc !== '') {
+	baseQuery += ' AND TO_VARCHAR("MAKTX") = ?';
+	queryParams.push(matDesc);
+}
 if (mtSeg && mtSeg !== '') {
 	baseQuery += ' AND TO_VARCHAR("MARKET_SEG") = ?';
 	queryParams.push(mtSeg);
@@ -46,6 +56,7 @@ if (com && com !== '' && com !== "=") {
 		baseQuery += ' AND TO_VARCHAR("COMMENTS") IS NULL';
 	}
 }
+
 if (usr && usr !== '') {
 	baseQuery += ' AND TO_VARCHAR("LAST_MODIFIED_USER") = ?';
 	queryParams.push(usr);

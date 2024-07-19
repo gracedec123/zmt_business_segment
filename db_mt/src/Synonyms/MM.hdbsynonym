@@ -2,15 +2,13 @@
   "MVKE": {
     "target": {
       "object": "MVKE",
-      "schema": "ECCPRD_BHP",
-      "database": "BHD"
+      "schema": "ECCPRD_BHP"
     }
   },
   "TVM4T": {
     "target": {
       "object": "TVM4T",
-      "schema": "ECCPRD_BHP",
-      "database": "BHD"
+      "schema": "ECCPRD_BHP"
     }
   }
 }

@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectDialogMatDesc"
+		title="{i18n>Matx}"
+		items="{oMatDesc>/}"
+		class="F4height"
+		search=".onValueHelpSearchMatDesc"
+		confirm=".onValueHelpCloseMatDesc"
+		cancel=".onValueHelpCloseMatDesc">
+		<StandardListItem
+			iconDensityAware="false"
+			iconInset="false"
+			title="{oMatDesc>MAKTX}" />
+	</SelectDialog>
+</core:FragmentDefinition>

@@ -106,12 +106,12 @@ sap.ui.define([
 
 			onValueHelpCloseKey: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMKey").setValue(oSelectedItem.getTitle());
-			},	
+			},
 			onValueHelpUsr: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
 					oView = this.getView();
@@ -139,10 +139,10 @@ sap.ui.define([
 
 			onValueHelpCloseUsr: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMUsr").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpCus: function (oEvent) {
@@ -172,10 +172,10 @@ sap.ui.define([
 
 			onValueHelpCloseCus: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMcus").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpCusDesc: function (oEvent) {
@@ -205,10 +205,10 @@ sap.ui.define([
 
 			onValueHelpCloseCusDesc: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMcusDesc").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMat: function (oEvent) {
@@ -238,13 +238,13 @@ sap.ui.define([
 
 			onValueHelpCloseMat: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMmat").setValue(oSelectedItem.getTitle());
 			},
-				onValueHelpMatDesc: function (oEvent) {
+			onValueHelpMatDesc: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
 					oView = this.getView();
 				if (!this._pValueHelpDialogMatDesc) {
@@ -271,10 +271,10 @@ sap.ui.define([
 
 			onValueHelpCloseMatDesc: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMmatDesc").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMtSeg: function (oEvent) {
@@ -304,10 +304,10 @@ sap.ui.define([
 
 			onValueHelpCloseMtSeg: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMtseg").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMCom: function (oEvent) {
@@ -337,10 +337,10 @@ sap.ui.define([
 
 			onValueHelpCloseCom: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
-				if (!oSelectedItem) {
-					return;
-				}
+				/*	oEvent.getSource().getBinding("items").filter([]);
+					if (!oSelectedItem) {
+						return;
+					}*/
 				this.byId("idMcom").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpSign: function (oEvent) {
@@ -370,11 +370,11 @@ sap.ui.define([
 
 			onValueHelpClose: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem");
-				oEvent.getSource().getBinding("items").filter([]);
+				/*	oEvent.getSource().getBinding("items").filter([]);
 
-				if (!oSelectedItem) {
-					return;
-				}
+					if (!oSelectedItem) {
+						return;
+					}*/
 
 				this.byId("idMSign").setValue(oSelectedItem.getTitle());
 			},
@@ -393,6 +393,11 @@ sap.ui.define([
 					}
 				} else {
 					FArray = aData;
+				}
+				for (var j = 0; j < FArray.length; j++) {
+					if (FArray[j].MT_SEG_ID_SAP = "531") {
+						FArray[j].MT_SEG_ID = "53D";
+					}
 				}
 				var aCols, oSettings, oSheet;
 				aCols = this.createColumnConfig();
@@ -574,13 +579,15 @@ sap.ui.define([
 				this.getRouter().navTo("RouteView2");
 			},
 			onSignSave: function () {
-			//	var oDialogModel = this.getView().getModel("dialogModel");
-			//	var oSign = oDialogModel.getData();
+				//	var oDialogModel = this.getView().getModel("dialogModel");
+				//	var oSign = oDialogModel.getData();
+				const batchSize = 1000; // Adjust based on server capabilities
 				var busyDialog = new sap.m.BusyDialog();
 				var oTable = this.getView().byId("tableId1");
 				var oTableModel = this.getView().getModel("tableModel");
 				var aTableData = oTableModel.getData();
 				var items = oTable.getSelectedItems();
+				var batches = [];
 				var that = this;
 				if (items.length === 0) {
 					MessageToast.show("Please Select Entries before Signoff");
@@ -604,21 +611,64 @@ sap.ui.define([
 						aTableData[j].LAST_MODIFIED_TIMESTAMP = this.formatDateobjToBackendDateString(new Date());
 						aTableData[j].LAST_MODIFIED_TIMESTAMP = aTableData[j].LAST_MODIFIED_TIMESTAMP.slice(0, 10);
 						aTableData[j].MKT_SIGN = aTableData[j].LAST_MODIFIED_USER + '-' +
-						                         aTableData[j].LAST_MODIFIED_TIMESTAMP    //oSign.MKT_SIGN;
-						busyDialog.open();
-						$.ajax({
+							aTableData[j].LAST_MODIFIED_TIMESTAMP //oSign.MKT_SIGN;
+						batches.push(aTableData[j]);
+					}
+					busyDialog.open();
+					/*	$.ajax({
 							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
 							method: "PUT",
 							contentType: "application/json",
-							data: JSON.stringify(aTableData[j]),
+							data: JSON.stringify(batches),
 							success: function () {
 								that.loadTableData();
 								busyDialog.close();
-							//	that._oDialog.close();
+								//	that._oDialog.close();
 							}
+						});*/
+				}
+				async function sendBatch(batch) {
+					//	console.log("Sending batch:", JSON.stringify(batch)); // Log the batch data
+					try {
+						const response = await $.ajax({
+							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
+							method: "PUT",
+							contentType: "application/json",
+							data: JSON.stringify(batch)
 						});
+						return response;
+					} catch (error) {
+
 					}
 				}
+
+				async function processBatches() {
+					const totalEntries = batches.length;
+					const totalBatches = Math.ceil(totalEntries / batchSize);
+					let currentBatch = 0;
+					let failedBatches = [];
+
+					console.log(`Total entries: ${totalEntries}, Total batches: ${totalBatches}`);
+
+					while (currentBatch < totalBatches) {
+						const startIndex = currentBatch * batchSize;
+						const endIndex = Math.min(startIndex + batchSize, totalEntries);
+						const batchChunk = batches.slice(startIndex, endIndex);
+
+						try {
+							await sendBatch(batchChunk);
+							console.log(`Processed batch ${currentBatch + 1} of ${totalBatches} successfully`);
+							currentBatch++;
+						} catch (error) {}
+					}
+
+					// Reload the table data after all batches are processed
+					that.loadTableData();
+					busyDialog.close();
+				}
+
+				// Start processing batches
+				processBatches();
 			},
 			onSignoff: function () {
 				if (!this._oDialog) {
@@ -741,51 +791,8 @@ sap.ui.define([
 				var date = this.formatDateobjToBackendDateString(new Date());
 				var user = this.getView().getModel("oUserModel").getProperty("/userName");
 				var modif = this.formatDateobjToBackendDateString(new Date());
-				var batchSize = 1000;
-				const delayTime = 1000;
-
-				/*	function delay(ms) {
-						return new Promise(resolve => setTimeout(resolve, ms));
-					}*/
-
-				/*	for (var i = 0; i < finalArray.length; i += batchSize) {
-						var FArray = new Array();
-						var batch = finalArray.slice(i, i + batchSize);
-						executeBatch(batch, date, user, modif);
-					}
-					// Function to execute a batch of updates
-					async function executeBatch(batch, date, user, modif) {
-						for (var i = 0; i < batch.length; i++) {
-							var oEntry = {
-								MT_KEY: batch[i].LookUp,
-								SOLD_TO: batch[i]["Customer Sold-To (ID)"],
-								SOLD_TO_DESC: batch[i]["Customer Sold-To (Desc)"],
-								MATNR: batch[i]["Material ID"],
-								MAKTX: batch[i]["Material Desc"],
-								MT_SEG_ID: batch[i]["MT Biz_Seg_ID"],
-								MT_SEG_DESC: batch[i]["MT Biz_Seg_Desc"],
-								MARKET_SEG: batch[i]["Marketing Segment"],
-								COMMENTS: batch[i].Comments,
-								MKT_SIGN: batch[i]["Mkting Signoff"],
-								CREATED_ON: date,
-								LAST_MODIFIED_USER: user,
-								LAST_MODIFIED_TIMESTAMP: modif
-							};
-							FArray.push(oEntry);
-						$.ajax({
-							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
-							method: "POST",
-							contentType: "application/json",
-							data: JSON.stringify(oEntry),
-							success: function () {
-								//	this.loadTableData();
-								busyDialog.close();
-							}.bind(this)
-						});
-						}
-					}
-					this.loadTableData();*/
-				var FArray = new Array();
+				var that = this;
+				var FArray = []
 				for (var i = 0; i < finalArray.length; i++) {
 					for (var key in finalArray[i]) {
 						if (typeof finalArray[i][key] === "number") {
@@ -814,37 +821,69 @@ sap.ui.define([
 					};
 					FArray.push(oEntry);
 				}
-				/*	for (var j = 0; j < FArray.length; j++) {
-						var numZeros = 18;
-						var num = FArray[j].MATNR;
-						var n = Math.abs(num);
-						var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
-						var zeroString = Math.pow(10, zeros).toString().substr(1);
-						if (num < 0) {
-							zeroString = '-' + zeroString;
-						}
-						num = zeroString + n;
-						var datavalue = JSON.stringify(num);
-						$.ajax({
-							url: "/xsjs_crud/FetchMM.xsjs",
-							method: "GET",
-							contentType: "application/json",
-							data: ({
-								dataobject: datavalue
-							}),
-							success: function (data) {
-								data = data.map(function (item) {
-									return item;
-								});
-								FArray[j].MT_SEG_ID_SAP = data[0].MVGR4;
-								FArray[j].MT_SEG_DESC_SAP = data[0].BEZEI;
+				$.ajax({
+						url: "/xsjs_crud/FetchM.xsjs",
+						method: "GET",
+						success: function (data) {
+							// Create an object or Map to store the data items
+							const dataMap = new Map(data.map(item => [item.MATNR, item]));
+
+							for (let j = 0; j < FArray.length; j++) {
+								const entry = FArray[j];
+								const numZeros = 18;
+								const num = entry.MATNR;
+								const n = Math.abs(num);
+								const zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+								const zeroString = Math.pow(10, zeros).toString().substr(1);
+								const paddedNum = (num < 0 ? '-' : '') + zeroString + n;
+								if (entry.MT_SEG_ID === "531") {
+									entry.MT_SEG_ID = "53D";
+								}
+								if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
+									entry.MT_SEG_ID = "XXX";
+								}
+								// Look up the data item using the padded MATNR value
+								const dataItem = dataMap.get(paddedNum);
+								if (dataItem) {
+									entry.MT_SEG_ID_SAP = dataItem.MVGR4;
+									entry.MT_SEG_DESC_SAP = dataItem.BEZEI;
+								} else {
+									console.warn(`No data found for MATNR ${entry.MATNR}`);
+								}
 							}
-						})
 
-					}*/
-
-				oTableModel.setData(FArray);
-				busyDialog.close();
+							// Update the model with the modified FArray
+							oTableModel.setData(FArray);
+							busyDialog.close();
+						}
+					})
+					/*	for (var j = 0; j < FArray.length - 1; j++) {
+							var numZeros = 18;
+							var num = FArray[j].MATNR;
+							var n = Math.abs(num);
+							var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+							var zeroString = Math.pow(10, zeros).toString().substr(1);
+							if (num < 0) {
+								zeroString = '-' + zeroString;
+							}
+							num = zeroString + n;
+							var datavalue = JSON.stringify(num);
+							$.ajax({
+								url: "/xsjs_crud/FetchMM.xsjs",
+								method: "GET",
+								contentType: "application/json",
+								data: ({
+									dataobject: datavalue
+								}),
+								success: function (data) {
+									data = data.map(function (item) {
+										return item;
+									});
+									FArray[j].MT_SEG_ID_SAP = data[0].MVGR4;
+									FArray[j].MT_SEG_DESC_SAP = data[0].BEZEI;
+								}
+							})
+						}*/
 			},
 			onAdd: function () {
 				if (!this._oDialog) {
@@ -878,16 +917,15 @@ sap.ui.define([
 			},
 			onSave: function () {
 
-				const delayTime = 1000;
-
-				function delay(ms) {
-					return new Promise(resolve => setTimeout(resolve, ms));
-				}
+				const batchSize = 1000; // Adjust based on server capabilities
 				var oTableModel = this.getView().getModel("tableModel");
 				var aTableData = oTableModel.getData();
 				var busyDialog = new sap.m.BusyDialog();
 				var that = this;
 				busyDialog.open();
+
+				// Prepare batches
+				var batches = [];
 				for (var i = 0; i < aTableData.length; i++) {
 					for (var key in aTableData[i]) {
 						if (typeof aTableData[i][key] === "number") {
@@ -896,6 +934,7 @@ sap.ui.define([
 							aTableData[i][key] = "";
 						}
 					}
+
 					if (aTableData[i].Action === 'U') {
 						var oEntry = {
 							MT_KEY: aTableData[i].MT_KEY,
@@ -914,45 +953,53 @@ sap.ui.define([
 							LAST_MODIFIED_USER: that.getView().getModel("oUserModel").getProperty("/userName"),
 							LAST_MODIFIED_TIMESTAMP: that.formatDateobjToBackendDateString(new Date()).slice(0, 10)
 						};
+						batches.push(oEntry);
+					}
+				}
 
-						/*	var numZeros = 18;
-							var num = oEntry.MATNR;
-							var n = Math.abs(num);
-							var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
-							var zeroString = Math.pow(10, zeros).toString().substr(1);
-							if (num < 0) {
-								zeroString = '-' + zeroString;
-							}
-							num = zeroString + n;
-							var datavalue = JSON.stringify(num);
-							$.ajax({
-								url: "/xsjs_crud/FetchMM.xsjs",
-								method: "GET",
-								contentType: "application/json",
-								data: ({
-									dataobject: datavalue
-								}),
-								success: function (data) {
-									data = data.map(function (item) {
-										return item;
-									});
-									oEntry.MT_SEG_ID_SAP = data[0].MVGR4;
-									oEntry.MT_SEG_DESC_SAP = data[0].BEZEI;*/
-						$.ajax({
+				async function sendBatch(batch) {
+					//	console.log("Sending batch:", JSON.stringify(batch)); // Log the batch data
+					try {
+						const response = await $.ajax({
 							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
 							method: "PUT",
 							contentType: "application/json",
-							data: JSON.stringify(oEntry),
-							success: function () {
-								that.loadTableData();
-								busyDialog.close();
-							}
+							data: JSON.stringify(batch)
 						});
-						//		}
-						//	})
+						return response;
+					} catch (error) {
 
 					}
 				}
+
+				async function processBatches() {
+					const totalEntries = batches.length;
+					const totalBatches = Math.ceil(totalEntries / batchSize);
+					let currentBatch = 0;
+					let failedBatches = [];
+
+					console.log(`Total entries: ${totalEntries}, Total batches: ${totalBatches}`);
+
+					while (currentBatch < totalBatches) {
+						const startIndex = currentBatch * batchSize;
+						const endIndex = Math.min(startIndex + batchSize, totalEntries);
+						const batchChunk = batches.slice(startIndex, endIndex);
+
+						try {
+							await sendBatch(batchChunk);
+							console.log(`Processed batch ${currentBatch + 1} of ${totalBatches} successfully`);
+							currentBatch++;
+						} catch (error) {}
+					}
+
+					// Reload the table data after all batches are processed
+					that.loadTableData();
+					busyDialog.close();
+				}
+
+				// Start processing batches
+				processBatches();
+
 			},
 			onFilter: function () {
 				var busyDialog = new sap.m.BusyDialog();
@@ -1010,10 +1057,10 @@ sap.ui.define([
 				//this.getView().byId("idChdate").setValueState("None")
 				if (lCdatef === null &&
 					lCdatet === null &&
-					lChdatef === null && 
-					lChdatet === null && 
-					(Msign === null || Msign === "") && 
-					(Mseg === null || Mseg === "") && 
+					lChdatef === null &&
+					lChdatet === null &&
+					(Msign === null || Msign === "") &&
+					(Mseg === null || Mseg === "") &&
 					Mkey === null &&
 					Mcus === null &&
 					Mmat === null &&
@@ -1230,79 +1277,82 @@ sap.ui.define([
 					zeroString = '-' + zeroString;
 				}
 				num = zeroString + n;
-				if (this.oOriginalItem.MT_SEG_ID === "531") {
-					this.oOriginalItem.MT_SEG_ID = "53D";
-				} else {
-					var datavalue = JSON.stringify(num);
-					var datavalue1 = JSON.stringify(that.oOriginalItem.MT_SEG_ID);
-					$.ajax({
-						url: "/xsjs_crud/FetchProfit.xsjs",
-						method: "GET",
-						contentType: "application/json",
-						data: ({
-							dataobject: datavalue1
-						}),
-						success: function (dataPro) {
-							dataPro = dataPro.map(function (item) {
-								return item;
-							});
-							var datavalue2 = JSON.stringify(dataPro[0].PROFIT);
-							$.ajax({
-								url: "/xsjs_crud/FetchSegCombo.xsjs",
-								method: "GET",
-								contentType: "application/json",
-								data: ({
-									dataobject: datavalue2
-								}),
-								success: function (dataCombo) {
-									dataCombo = dataCombo.map(function (item) {
-										return item;
-									});
-									var len = dataCombo.length;
-									oPtions.setSizeLimit(len);
-									/*		var idx = dataCombo.findIndex(item => item.MT_ID === "XXX");
-											if (idx > 0) {
-												dataCombo[idx].MT_DESC = "No Default Segment";
-											}*/
-									oPtions.setData(dataCombo);
-								}
-							});
-						}
-
-					});
-					/*	if (that.oOriginalItem.SOLD_TO === "853379" && that.oOriginalItem.MATNR === "5174890") {
-							that.oOriginalItem.MT_SEG_ID = "XXX";
-							that.oOriginalItem.MT_SEG_ID_DESC = "No Default Segment";
-						}*/
-					//	that.oOriginalItem.MT_SEG_ID_SAP = data[0].MVGR4 + ' ' + data[0].BEZEI;
-
-					if (!that._oDialog) {
-						Fragment.load({
-							id: that.getView().getId(),
-							name: "webapp.webapp.fragment.UpdateItemDialog",
-							controller: that
-						}).then(function (oDialog) {
-							that._oDialog = oDialog;
-							that.getView().addDependent(that._oDialog);
-
-							if (!that._oDialog.getModel()) {
-								that._oDialog.setModel(that.getView().getModel("dialogModel"));
+				//	if (this.oOriginalItem.MT_SEG_ID === "531") {
+				//		this.oOriginalItem.MT_SEG_ID = "53D";
+				//	} else {
+				var datavalue = JSON.stringify(num);
+				var datavalue1 = JSON.stringify(that.oOriginalItem.MT_SEG_ID);
+				$.ajax({
+					url: "/xsjs_crud/FetchProfit.xsjs",
+					method: "GET",
+					contentType: "application/json",
+					data: ({
+						dataobject: datavalue1
+					}),
+					success: function (dataPro) {
+						dataPro = dataPro.map(function (item) {
+							return item;
+						});
+						var datavalue2 = JSON.stringify(dataPro[0].PROFIT);
+						$.ajax({
+							url: "/xsjs_crud/FetchSegCombo.xsjs",
+							method: "GET",
+							contentType: "application/json",
+							data: ({
+								dataobject: datavalue2
+							}),
+							success: function (dataCombo) {
+								dataCombo = dataCombo.map(function (item) {
+									return item;
+								});
+								var len = dataCombo.length;
+								oPtions.setSizeLimit(len);
+								/*		var idx = dataCombo.findIndex(item => item.MT_ID === "XXX");
+										if (idx > 0) {
+											dataCombo[idx].MT_DESC = "No Default Segment";
+										}*/
+								oPtions.setData(dataCombo);
 							}
-							that._oDialog.open();
-							that.byId("comboBox").setSelectedKey(that.oOriginalItem.MT_SEG_ID);
-							that._oDialog.attachAfterClose(function () {
-								that._oDialog.destroy();
-								that._oDialog = null;
-							}.bind(that));
-						}.bind(that));
-					} else {
-						this._oDialog.open();
+						});
 					}
 
-					busyDialog.close();
-					//		}
-					//	});
+				});
+				/*		if (this.oOriginalItem.MT_SEG_ID === "531") {
+							this.oOriginalItem.MT_SEG_ID = "53D";
+						}
+						//	}
+						if (that.oOriginalItem.SOLD_TO === "853379" && that.oOriginalItem.MATNR === "5174890") {
+							that.oOriginalItem.MT_SEG_ID = "XXX";
+							//	that.oOriginalItem.MT_SEG_ID_DESC = "No Default Segment";
+						}*/
+				//	that.oOriginalItem.MT_SEG_ID_SAP = data[0].MVGR4 + ' ' + data[0].BEZEI;
+
+				if (!that._oDialog) {
+					Fragment.load({
+						id: that.getView().getId(),
+						name: "webapp.webapp.fragment.UpdateItemDialog",
+						controller: that
+					}).then(function (oDialog) {
+						that._oDialog = oDialog;
+						that.getView().addDependent(that._oDialog);
+
+						if (!that._oDialog.getModel()) {
+							that._oDialog.setModel(that.getView().getModel("dialogModel"));
+						}
+						that._oDialog.open();
+						that.byId("comboBox").setSelectedKey(that.oOriginalItem.MT_SEG_ID);
+						that._oDialog.attachAfterClose(function () {
+							that._oDialog.destroy();
+							that._oDialog = null;
+						}.bind(that));
+					}.bind(that));
+				} else {
+					this._oDialog.open();
 				}
+
+				busyDialog.close();
+				//		}
+				//	});
 			},
 			onUpdate: function () {
 				var oTableModel = this.getView().getModel("tableModel");
@@ -1334,7 +1384,7 @@ sap.ui.define([
 				}
 				var aTableData = oTableModel.getData();
 				$.ajax({
-					url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
+					url: "/xsjs_crud/CUDInitial.xsjs?cmd=save",
 					method: "PUT",
 					contentType: "application/json",
 					data: JSON.stringify(oUpdatedItem),
@@ -1352,10 +1402,7 @@ sap.ui.define([
 						} else {
 							MessageToast.show("Record not found for update.");
 						}
-					}.bind(this),
-					error: function () {
-						MessageToast.show("An error occurred while updating the record. Please try again later.");
-					}
+					}.bind(this)
 				});
 			},
 

@@ -3,13 +3,15 @@
 		id="selectDialogCusDesc"
 		title="{i18n>SoldToDesc}"
 		items="{oCusDesc>/}"
-		class="F4height"
+		class="F4height_multi"
 		search=".onValueHelpSearchCusDesc"
 		confirm=".onValueHelpCloseCusDesc"
-		cancel=".onValueHelpCloseCusDesc">
+		cancel=".onValueHelpCloseCusDesc"
+		multiSelect="true">
 		<StandardListItem
 			iconDensityAware="false"
 			iconInset="false"
-			title="{oCusDesc>SOLD_TO_DESC}" />
+			title="{oCusDesc>SOLD_TO_DESC}" 
+			description="{oCusDesc>SOLD_TO}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

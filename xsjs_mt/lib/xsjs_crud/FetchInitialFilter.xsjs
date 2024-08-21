@@ -11,7 +11,7 @@ var cusDesc = data.MTCUSDESC;
 var matDesc = data.MTMATDESC;
 var mtSeg = data.MTSEG;
 var com = data.MTCOM;
-var usr = data.MTUSR;                         
+var usr = data.MTUSR;
 var sign = data.MSIGNOFF;
 var segm = data.MSEGMENT;
 $.response.contentType = "application/json";
@@ -37,12 +37,20 @@ if (mat && mat !== '') {
 	queryParams.push(mat);
 }
 if (cusDesc && cusDesc !== '') {
-	baseQuery += ' AND TO_VARCHAR("SOLD_TO_DESC") = ?';
-	queryParams.push(cusDesc);
+	//baseQuery += ' AND TO_VARCHAR("SOLD_TO_DESC") = ?';
+	//queryParams.push(cusDesc);
+	if (cusDesc.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("SOLD_TO_DESC") IN (' + cusDesc.map(() => '?').join(',') + ')';
+		queryParams.push(...cusDesc);
+	}
 }
 if (matDesc && matDesc !== '') {
-	baseQuery += ' AND TO_VARCHAR("MAKTX") = ?';
-	queryParams.push(matDesc);
+	//	baseQuery += ' AND TO_VARCHAR("MAKTX") = ?';
+	//	queryParams.push(matDesc);
+	if (matDesc.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("MAKTX") IN (' + matDesc.map(() => '?').join(',') + ')';
+		queryParams.push(...matDesc);
+	}
 }
 if (mtSeg && mtSeg !== '') {
 	baseQuery += ' AND TO_VARCHAR("MARKET_SEG") = ?';

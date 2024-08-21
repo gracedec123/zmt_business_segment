@@ -33,3 +33,6 @@
 .F4height .sapMSLI.sapMSLINoIconInset {
 	height: 2rem;
 }
+.F4height_multi .sapMSLI.sapMSLINoIconInset {
+	height: 5rem;
+}

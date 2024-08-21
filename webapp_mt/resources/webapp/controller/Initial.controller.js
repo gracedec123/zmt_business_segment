@@ -41,6 +41,8 @@ sap.ui.define([
 				oColumn8.setVisible(oColumn8.getVisible());
 				var oColumn9 = this.getView().byId("showColumn3");
 				oColumn9.setVisible(oColumn9.getVisible());
+				var oColumn11 = this.getView().byId("showColumn4");
+				oColumn11.setVisible(oColumn11.getVisible());
 				var oColumn12 = this.getView().byId("showColumn5");
 				oColumn12.setVisible(oColumn12.getVisible());
 
@@ -68,8 +70,8 @@ sap.ui.define([
 			onSync: function () {
 				this.getView().byId("idMKey").setValue("");
 				this.getView().byId("idMSign").setValue("");
-				this.getView().byId("idMcus").setValue("");
-				this.getView().byId("idMmat").setValue("");
+			//	this.getView().byId("idMcus").setValue("");
+			//	this.getView().byId("idMmat").setValue("");
 				this.getView().byId("idMtseg").setValue("");
 				this.getView().byId("idMcom").setValue("");
 				this.getView().byId("idMUsr").setValue("");
@@ -77,6 +79,10 @@ sap.ui.define([
 				this.getView().byId("idChdate").setValue("");
 				this.getView().byId("idCdate").setValue("");
 				this.getView().byId("Search").setValue("");
+				var oMultiInputCus = this.byId("idMcusDesc");
+				 oMultiInputCus.removeAllTokens();
+				var oMultiInput = this.byId("idMmatDesc");
+				 oMultiInput.removeAllTokens();
 				this.loadTableData();
 			},
 			onValueHelpKey: function (oEvent) {
@@ -199,17 +205,27 @@ sap.ui.define([
 
 			onValueHelpSearchCusDesc: function (oEvent) {
 				var sValue = oEvent.getParameter("value");
-				var oFilter = new Filter("SOLD_TO_DESC", FilterOperator.Contains, sValue);
+				var oFilter = new Filter(
+					[new Filter("SOLD_TO_DESC", FilterOperator.Contains, sValue),
+						new Filter("SOLD_TO", FilterOperator.Contains, sValue)
+					])
 				oEvent.getSource().getBinding("items").filter([oFilter]);
 			},
 
 			onValueHelpCloseCusDesc: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				/*	oEvent.getSource().getBinding("items").filter([]);
-					if (!oSelectedItem) {
-						return;
-					}*/
-				this.byId("idMcusDesc").setValue(oSelectedItem.getTitle());
+				var oSelectedItem = oEvent.getParameter("selectedItems");
+				var oMultiInputCus = this.byId("idMcusDesc");
+				var filter = oEvent.getSource().getBinding("items");
+
+				if (oSelectedItem && oSelectedItem.length > 0) {
+					oSelectedItem.forEach(function (oItem) {
+						oMultiInputCus.addToken(new sap.m.Token({
+							text: oItem.getTitle()
+						}));
+					});
+				}
+			
+			//	this.byId("idMcusDesc").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMat: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -265,17 +281,27 @@ sap.ui.define([
 
 			onValueHelpSearchMatDesc: function (oEvent) {
 				var sValue = oEvent.getParameter("value");
-				var oFilter = new Filter("MAKTX", FilterOperator.Contains, sValue);
+				var oFilter = new Filter(
+					[new Filter("MAKTX", FilterOperator.Contains, sValue),
+						new Filter("MATNR", FilterOperator.Contains, sValue)
+					]);
+
 				oEvent.getSource().getBinding("items").filter([oFilter]);
 			},
 
 			onValueHelpCloseMatDesc: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				/*	oEvent.getSource().getBinding("items").filter([]);
-					if (!oSelectedItem) {
-						return;
-					}*/
-				this.byId("idMmatDesc").setValue(oSelectedItem.getTitle());
+				var oSelectedItem = oEvent.getParameter("selectedItems");
+				var oMultiInput = this.byId("idMmatDesc");
+				var filter = oEvent.getSource().getBinding("items");
+
+				if (oSelectedItem && oSelectedItem.length > 0) {
+					oSelectedItem.forEach(function (oItem) {
+						oMultiInput.addToken(new sap.m.Token({
+							text: oItem.getTitle()
+						}));
+					});
+				}
+				//	this.byId("idMmatDesc").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMtSeg: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -394,11 +420,11 @@ sap.ui.define([
 				} else {
 					FArray = aData;
 				}
-				for (var j = 0; j < FArray.length; j++) {
-					if (FArray[j].MT_SEG_ID_SAP = "531") {
-						FArray[j].MT_SEG_ID = "53D";
-					}
-				}
+				/*	for (var j = 0; j < FArray.length; j++) {
+						if (FArray[j].MT_SEG_ID_SAP = "531") {
+							FArray[j].MT_SEG_ID = "53D";
+						}
+					}*/
 				var aCols, oSettings, oSheet;
 				aCols = this.createColumnConfig();
 				oSettings = {
@@ -508,6 +534,13 @@ sap.ui.define([
 				var table = this.byId("tableId1");
 				var binding = table.getBinding("items");
 				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("MT_SEG_ID", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
+			onFilterMTSegIdSAP: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
 				var oSorter = new Sorter("MT_SEG_ID_SAP", this._bDescendingSort);
 				binding.sort(oSorter);
 			},
@@ -568,6 +601,8 @@ sap.ui.define([
 				oColumn8.setVisible(!oColumn8.getVisible());
 				var oColumn9 = this.getView().byId("showColumn3");
 				oColumn9.setVisible(!oColumn9.getVisible());
+				var oColumn11 = this.getView().byId("showColumn4");
+				oColumn11.setVisible(!oColumn11.getVisible());
 				var oColumn12 = this.getView().byId("showColumn5");
 				oColumn12.setVisible(!oColumn12.getVisible());
 
@@ -836,7 +871,7 @@ sap.ui.define([
 								const zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
 								const zeroString = Math.pow(10, zeros).toString().substr(1);
 								const paddedNum = (num < 0 ? '-' : '') + zeroString + n;
-								if (entry.MT_SEG_ID === "531") {
+								if (entry.MT_SEG_ID_SAP === "531") {
 									entry.MT_SEG_ID = "53D";
 								}
 								if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
@@ -1006,15 +1041,35 @@ sap.ui.define([
 				busyDialog.open();
 				var Msign = this.getView().byId("idMSign").mProperties.value;
 				var Mkey = this.getView().byId("idMKey").mProperties.value;
-				var Mcus = this.getView().byId("idMcus").mProperties.value;
-				var Mmat = this.getView().byId("idMmat").mProperties.value;
-				var McusDesc = this.getView().byId("idMcusDesc").mProperties.value;
-				var MmatDesc = this.getView().byId("idMmatDesc").mProperties.value;
+				var Mcus ;
+			//= this.getView().byId("idMcus").mProperties.value;
+				var Mmat ;
+			//= this.getView().byId("idMmat").mProperties.value;
 				var MtSeg = this.getView().byId("idMtseg").mProperties.value;
 				var Mcom = this.getView().byId("idMcom").mProperties.value;
 				var Musr = this.getView().byId("idMUsr").mProperties.value;
 				var oCombo = this.byId("comboBox1");
 				var Mseg = oCombo.getSelectedKey();
+				//var McusDesc = this.getView().byId("idMcusDesc").mProperties.value;
+				var aTokensCus = this.byId("idMcusDesc").getTokens();
+				var McusDesc = [];
+				for (var i in aTokensCus) {
+					McusDesc.push(new sap.ui.model.Filter("SOLD_TO_DESC", sap.ui.model.FilterOperator.EQ, aTokensCus[i].getText()));
+				}
+				var CusValues = McusDesc
+					.filter(filter => filter.sPath === 'SOLD_TO_DESC' && filter.sOperator === 'EQ')
+					.map(filter => filter.oValue1);
+					
+				var aTokens = this.byId("idMmatDesc").getTokens();
+				var MmatDesc = [];
+				for (var i in aTokens) {
+					MmatDesc.push(new sap.ui.model.Filter("MAKTX", sap.ui.model.FilterOperator.EQ, aTokens[i].getText()));
+				}
+				var maktxValues = MmatDesc
+					.filter(filter => filter.sPath === 'MAKTX' && filter.sOperator === 'EQ')
+					.map(filter => filter.oValue1);
+				//	var MmatDesc = this.getView().byId("idMmatDesc").mProperties.value;
+
 				var lCdatef = this.getView().byId("idCdate").getDateValue(); //this.CdateFrom;
 				if (lCdatef) {
 					var lCdatef2 = lCdatef.toLocaleString().split(',');
@@ -1080,8 +1135,8 @@ sap.ui.define([
 						MTKEY: Mkey,
 						MTCUS: Mcus,
 						MTMAT: Mmat,
-						MTCUSDESC: McusDesc,
-						MTMATDESC: MmatDesc,
+						MTCUSDESC: CusValues,
+						MTMATDESC: maktxValues,
 						MTSEG: MtSeg,
 						MTCOM: Mcom,
 						MTUSR: Musr,
@@ -1121,22 +1176,39 @@ sap.ui.define([
 				busyDialog.open();
 				var oTable = new JSONModel();
 				this.getView().setModel(oTable, "oTable");
+
 				var oSign = new JSONModel();
 				this.getView().setModel(oSign, "oSign");
+				oSign.setSizeLimit(5000);
+
 				var oCus = new JSONModel();
 				this.getView().setModel(oCus, "oCus");
+				oCus.setSizeLimit(5000);
+
 				var oCusDesc = new JSONModel();
 				this.getView().setModel(oCusDesc, "oCusDesc");
+				oCusDesc.setSizeLimit(5000);
+
 				var oMat = new JSONModel();
 				this.getView().setModel(oMat, "oMat");
+				oMat.setSizeLimit(5000);
+
 				var oMatDesc = new JSONModel();
 				this.getView().setModel(oMatDesc, "oMatDesc");
+				oMatDesc.setSizeLimit(5000);
+
 				var oMtSeg = new JSONModel();
 				this.getView().setModel(oMtSeg, "oMtSeg");
+				oMtSeg.setSizeLimit(5000);
+
 				var oCom = new JSONModel();
 				this.getView().setModel(oCom, "oCom");
+				oCom.setSizeLimit(5000);
+
 				var oUsr = new JSONModel();
 				this.getView().setModel(oUsr, "oUsr");
+				oUsr.setSizeLimit(5000);
+
 				this.getView().setModel(oTableModel, "tableModel");
 				$.ajax({
 					url: "/xsjs_crud/FetchInitial.xsjs",
@@ -1186,9 +1258,10 @@ sap.ui.define([
 							}
 							if (oACusDesc.indexOf(aTable[i].SOLD_TO_DESC) === -1) {
 								var oEntry_cusDesc = {
-									SOLD_TO_DESC: aTable[i].SOLD_TO_DESC
+									SOLD_TO_DESC: aTable[i].SOLD_TO_DESC,
+									SOLD_TO: aTable[i].SOLD_TO
 								}
-								oACusDesc.push(aTable[i].SOLD_TO_DESC);
+								oACusDesc.push(aTable[i].SOLD_TO_DESC, aTable[i].SOLD_TO);
 								CusDescArray.push(oEntry_cusDesc);
 							}
 							if (oAMat.indexOf(aTable[i].MATNR) === -1) {
@@ -1200,9 +1273,10 @@ sap.ui.define([
 							}
 							if (oAMatDesc.indexOf(aTable[i].MAKTX) === -1) {
 								var oEntry_MatDesc = {
-									MAKTX: aTable[i].MAKTX
+									MAKTX: aTable[i].MAKTX,
+									MATNR: aTable[i].MATNR
 								}
-								oAMatDesc.push(aTable[i].MAKTX);
+								oAMatDesc.push(aTable[i].MAKTX, aTable[i].MATNR);
 								MatDescArray.push(oEntry_MatDesc);
 							}
 							if (oAMtSeg.indexOf(aTable[i].MARKET_SEG) === -1) {

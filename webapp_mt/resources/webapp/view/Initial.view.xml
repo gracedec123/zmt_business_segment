@@ -17,7 +17,7 @@
 									</Input>
 								</fb:control>
 							</fb:FilterGroupItem>
-							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldTo" label="Customer Sold-To (ID)" labelTooltip="Customer Sold-To (ID)">
+						<!--	<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldTo" label="Customer Sold-To (ID)" labelTooltip="Customer Sold-To (ID)">
 								<fb:control>
 									<Input id="idMcus" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCus" showSuggestion="true" suggestionItems="{oCus>/}">
 										<suggestionItems>
@@ -25,32 +25,32 @@
 										</suggestionItems>
 									</Input>
 								</fb:control>
-							</fb:FilterGroupItem>
+							</fb:FilterGroupItem>-->
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldToDesc" label="Customer Sold-To Desc." labelTooltip="Customer Sold-To Desc.">
 								<fb:control>
-									<Input id="idMcusDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCusDesc" showSuggestion="true" suggestionItems="{oCusDesc>/}">
+									<MultiInput id="idMcusDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCusDesc" showSuggestion="true" suggestionItems="{oCusDesc>/}">
 										<suggestionItems>
 											<core:Item text="{oCusDesc>SOLD_TO_DESC}"/>
 										</suggestionItems>
-									</Input>
+									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
-							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material" label="Material ID" labelTooltip="Material ID">
+					<!--		<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material" label="Material ID" labelTooltip="Material ID">
 								<fb:control>
 									<Input id="idMmat" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMat" showSuggestion="true" suggestionItems="{oMat>/}">
 										<suggestionItems>
 											<core:Item text="{oMat>MATNR}"/>
 										</suggestionItems>
 									</Input>
-								</fb:control>
-							</fb:FilterGroupItem>
+								</fb:control> 
+							</fb:FilterGroupItem>-->
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material Desc" label="Material Desc." labelTooltip="Material Desc">
 								<fb:control>
-									<Input id="idMmatDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMatDesc" showSuggestion="true" suggestionItems="{oMatDesc>/}">
+									<MultiInput id="idMmatDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMatDesc" showSuggestion="true" suggestionItems="{oMatDesc>/}">
 										<suggestionItems>
 											<core:Item text="{oMatDesc>MAKTX}"/>
 										</suggestionItems>
-									</Input>
+									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="MarketingSegment" label="Marketing Segment" labelTooltip="Marketing Segment">
@@ -151,6 +151,10 @@
 								</Column>
 								<Column id="showColumn3" width="100%">
 									<!--	<Text text="{i18n>MTSegId}"/>-->
+									<Button text="{i18n>MTSegIdSAP}" type="Transparent" width="200px" id="buttonMTSegIdSAP" press="onFilterMTSegIdSAP"/>
+								</Column>
+								<Column id="showColumn4" width="100%">
+									<!--	<Text text="{i18n>MTSegId}"/>-->
 									<Button text="{i18n>MTSegId}" type="Transparent" width="200px" id="buttonMTSegId" press="onFilterMTSegId"/>
 								</Column>
 								<Column id="hideColumn" width="100%">
@@ -190,6 +194,7 @@
 										<Text text="{tableModel>MATNR}"/>
 										<Text text="{tableModel>MAKTX}"/>
 										<Text text="{tableModel>MT_SEG_ID_SAP} {tableModel>MT_SEG_DESC_SAP}"/>
+										<Text text="{tableModel>MT_SEG_ID} {tableModel>MT_SEG_DESC}"/>
 										<Text text="{tableModel>MARKET_SEG}"/>
 										<Input value="{tableModel>COMMENTS}" editable="true" liveChange="onLive"/>
 										<Input value="{tableModel>MKT_SIGN}" editable="true" liveChange="onLive"/>

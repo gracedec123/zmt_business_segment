@@ -70,19 +70,19 @@ sap.ui.define([
 			onSync: function () {
 				this.getView().byId("idMKey").setValue("");
 				this.getView().byId("idMSign").setValue("");
-			//	this.getView().byId("idMcus").setValue("");
-			//	this.getView().byId("idMmat").setValue("");
+				//	this.getView().byId("idMcus").setValue("");
+				//	this.getView().byId("idMmat").setValue("");
 				this.getView().byId("idMtseg").setValue("");
 				this.getView().byId("idMcom").setValue("");
 				this.getView().byId("idMUsr").setValue("");
-				this.byId("comboBox1").setSelectedKey("");
+				this.byId("comboBox1").setSelectedKeys("");
 				this.getView().byId("idChdate").setValue("");
 				this.getView().byId("idCdate").setValue("");
 				this.getView().byId("Search").setValue("");
 				var oMultiInputCus = this.byId("idMcusDesc");
-				 oMultiInputCus.removeAllTokens();
+				oMultiInputCus.removeAllTokens();
 				var oMultiInput = this.byId("idMmatDesc");
-				 oMultiInput.removeAllTokens();
+				oMultiInput.removeAllTokens();
 				this.loadTableData();
 			},
 			onValueHelpKey: function (oEvent) {
@@ -111,12 +111,18 @@ sap.ui.define([
 			},
 
 			onValueHelpCloseKey: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				/*	oEvent.getSource().getBinding("items").filter([]);
-					if (!oSelectedItem) {
-						return;
-					}*/
-				this.byId("idMKey").setValue(oSelectedItem.getTitle());
+				var oSelectedItem = oEvent.getParameter("selectedItems");
+				var oMultiInputKey = this.byId("idMKey");
+				var filter = oEvent.getSource().getBinding("items");
+
+				if (oSelectedItem && oSelectedItem.length > 0) {
+					oSelectedItem.forEach(function (oItem) {
+						oMultiInputKey.addToken(new sap.m.Token({
+							text: oItem.getTitle()
+						}));
+					});
+				}
+				//	this.byId("idMKey").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpUsr: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -144,12 +150,18 @@ sap.ui.define([
 			},
 
 			onValueHelpCloseUsr: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				/*	oEvent.getSource().getBinding("items").filter([]);
-					if (!oSelectedItem) {
-						return;
-					}*/
-				this.byId("idMUsr").setValue(oSelectedItem.getTitle());
+				var oSelectedItem = oEvent.getParameter("selectedItems");
+				var oMultiInputUsr = this.byId("idMUsr");
+				var filter = oEvent.getSource().getBinding("items");
+
+				if (oSelectedItem && oSelectedItem.length > 0) {
+					oSelectedItem.forEach(function (oItem) {
+						oMultiInputUsr.addToken(new sap.m.Token({
+							text: oItem.getTitle()
+						}));
+					});
+				}
+				//	this.byId("idMUsr").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpCus: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -224,8 +236,8 @@ sap.ui.define([
 						}));
 					});
 				}
-			
-			//	this.byId("idMcusDesc").setValue(oSelectedItem.getTitle());
+
+				//	this.byId("idMcusDesc").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMat: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -329,12 +341,18 @@ sap.ui.define([
 			},
 
 			onValueHelpCloseMtSeg: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				/*	oEvent.getSource().getBinding("items").filter([]);
-					if (!oSelectedItem) {
-						return;
-					}*/
-				this.byId("idMtseg").setValue(oSelectedItem.getTitle());
+				var oSelectedItem = oEvent.getParameter("selectedItems");
+				var oMultiInputSeg = this.byId("idMtseg");
+				var filter = oEvent.getSource().getBinding("items");
+
+				if (oSelectedItem && oSelectedItem.length > 0) {
+					oSelectedItem.forEach(function (oItem) {
+						oMultiInputSeg.addToken(new sap.m.Token({
+							text: oItem.getTitle()
+						}));
+					});
+				}
+				//	this.byId("idMtseg").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpMCom: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -362,12 +380,18 @@ sap.ui.define([
 			},
 
 			onValueHelpCloseCom: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				/*	oEvent.getSource().getBinding("items").filter([]);
-					if (!oSelectedItem) {
-						return;
-					}*/
-				this.byId("idMcom").setValue(oSelectedItem.getTitle());
+				var oSelectedItem = oEvent.getParameter("selectedItems");
+				var oMultiInputCom = this.byId("idMcom");
+				var filter = oEvent.getSource().getBinding("items");
+
+				if (oSelectedItem && oSelectedItem.length > 0) {
+					oSelectedItem.forEach(function (oItem) {
+						oMultiInputCom.addToken(new sap.m.Token({
+							text: oItem.getTitle()
+						}));
+					});
+				}
+				//	this.byId("idMcom").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpSign: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -395,14 +419,18 @@ sap.ui.define([
 			},
 
 			onValueHelpClose: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("selectedItem");
-				/*	oEvent.getSource().getBinding("items").filter([]);
+				var oSelectedItem = oEvent.getParameter("selectedItems");
+				var oMultiInputSign = this.byId("idMSign");
+				var filter = oEvent.getSource().getBinding("items");
 
-					if (!oSelectedItem) {
-						return;
-					}*/
-
-				this.byId("idMSign").setValue(oSelectedItem.getTitle());
+				if (oSelectedItem && oSelectedItem.length > 0) {
+					oSelectedItem.forEach(function (oItem) {
+						oMultiInputSign.addToken(new sap.m.Token({
+							text: oItem.getTitle()
+						}));
+					});
+				}
+				//	this.byId("idMSign").setValue(oSelectedItem.getTitle());
 			},
 
 			onDataExport: function () {
@@ -731,17 +759,82 @@ sap.ui.define([
 			},
 			onTransfer: function () {
 				this.getRouter().navTo("RouteView4");
+				const batchSize = 1000;
+				var that = this;
 				var busyDialog = new sap.m.BusyDialog();
 				var oTable = this.getView().byId("tableId1");
 				var oTableModel = this.getView().getModel("tableModel");
 				var aTableData = oTableModel.getData();
 				var items = oTable.getSelectedItems();
+				var batches = [];
 				for (var i = 0; i < items.length; i++) {
 					var data = items[i].getBindingContextPath();
 					var len = data.length;
 					var j = data.slice(1, len);
-					busyDialog.open();
-					$.ajax({
+					for (var key in aTableData[j]) {
+						if (typeof aTableData[j][key] === "number") {
+							aTableData[i][key] = aTableData[j][key].toString();
+						} else if (aTableData[j][key] === null) {
+							aTableData[j][key] = "";
+						}
+					}
+					var oEntry = {
+						SOLD_TO: aTableData[j].SOLD_TO,
+						MATNR: aTableData[j].MATNR,
+						MAKTX: aTableData[j].MAKTX,
+						SOLD_TO_DESC: aTableData[j].SOLD_TO_DESC,
+						MT_SEG_ID: aTableData[j].MT_SEG_ID,
+						MT_SEG_DESC: aTableData[j].MT_SEG_DESC,
+						MARKET_SEG: aTableData[j].MARKET_SEG,
+						LAST_MODIFIED_USER: that.getView().getModel("oUserModel").getProperty("/userName"),
+						LAST_MODIFIED_TIMESTAMP: that.formatDateobjToBackendDateString(new Date()).slice(0, 10)
+					};
+					batches.push(oEntry);
+				}
+				busyDialog.open();
+				async function sendBatch(batch) {
+					try {
+						const response = await $.ajax({
+							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdatefinal",
+							method: "POST",
+							contentType: "application/json",
+							data: JSON.stringify(batch)
+						});
+						return response;
+					} catch (error) {
+
+					}
+				}
+
+				async function processBatches() {
+					const totalEntries = batches.length;
+					const totalBatches = Math.ceil(totalEntries / batchSize);
+					let currentBatch = 0;
+					let failedBatches = [];
+
+					console.log(`Total entries: ${totalEntries}, Total batches: ${totalBatches}`);
+
+					while (currentBatch < totalBatches) {
+						const startIndex = currentBatch * batchSize;
+						const endIndex = Math.min(startIndex + batchSize, totalEntries);
+						const batchChunk = batches.slice(startIndex, endIndex);
+
+						try {
+							await sendBatch(batchChunk);
+							console.log(`Processed batch ${currentBatch + 1} of ${totalBatches} successfully`);
+							currentBatch++;
+						} catch (error) {}
+					}
+
+					// Reload the table data after all batches are processed
+					that.loadTableDataFinal();
+					busyDialog.close();
+				}
+
+				// Start processing batches
+				processBatches();
+
+				/*	$.ajax({
 						url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdatefinal",
 						method: "POST",
 						contentType: "application/json",
@@ -750,8 +843,7 @@ sap.ui.define([
 							this.loadTableDataFinal();
 							busyDialog.close();
 						}.bind(this)
-					});
-				}
+					});*/
 			},
 			loadTableDataFinal: function () {
 
@@ -997,7 +1089,7 @@ sap.ui.define([
 					try {
 						const response = await $.ajax({
 							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
-							method: "PUT",
+							method: "POST",
 							contentType: "application/json",
 							data: JSON.stringify(batch)
 						});
@@ -1039,17 +1131,66 @@ sap.ui.define([
 			onFilter: function () {
 				var busyDialog = new sap.m.BusyDialog();
 				busyDialog.open();
-				var Msign = this.getView().byId("idMSign").mProperties.value;
-				var Mkey = this.getView().byId("idMKey").mProperties.value;
-				var Mcus ;
-			//= this.getView().byId("idMcus").mProperties.value;
-				var Mmat ;
-			//= this.getView().byId("idMmat").mProperties.value;
-				var MtSeg = this.getView().byId("idMtseg").mProperties.value;
-				var Mcom = this.getView().byId("idMcom").mProperties.value;
-				var Musr = this.getView().byId("idMUsr").mProperties.value;
+				//	var Msign = this.getView().byId("idMSign").mProperties.value;
+				//	var Mkey = this.getView().byId("idMKey").mProperties.value;
+				var Mcus;
+				//= this.getView().byId("idMcus").mProperties.value;
+				var Mmat;
+				//= this.getView().byId("idMmat").mProperties.value;
+				//	var MtSeg = this.getView().byId("idMtseg").mProperties.value;
+				//var Mcom = this.getView().byId("idMcom").mProperties.value;
+				//var Musr = this.getView().byId("idMUsr").mProperties.value;
 				var oCombo = this.byId("comboBox1");
-				var Mseg = oCombo.getSelectedKey();
+				var Mseg = oCombo.getSelectedKeys();
+				//User 
+				var aTokensUsr = this.byId("idMUsr").getTokens();
+				var Musr = [];
+				for (var i in aTokensUsr) {
+					Musr.push(new sap.ui.model.Filter("LAST_MODIFIED_USER", sap.ui.model.FilterOperator.EQ, aTokensUsr[i].getText()));
+				}
+				var UsrValues = Musr
+					.filter(filter => filter.sPath === 'LAST_MODIFIED_USER' && filter.sOperator === 'EQ')
+					.map(filter => filter.oValue1);
+					
+				//Comments
+				var aTokensCom = this.byId("idMcom").getTokens();
+				var Mcom = [];
+				for (var i in aTokensCom) {
+					Mcom.push(new sap.ui.model.Filter("COMMENTS", sap.ui.model.FilterOperator.EQ, aTokensCom[i].getText()));
+				}
+				var ComValues = Mcom
+					.filter(filter => filter.sPath === 'COMMENTS' && filter.sOperator === 'EQ')
+					.map(filter => filter.oValue1);
+					
+				//Segment
+				var aTokensSeg = this.byId("idMtseg").getTokens();
+				var MtSeg = [];
+				for (var i in aTokensSeg) {
+					MtSeg.push(new sap.ui.model.Filter("MARKET_SEG", sap.ui.model.FilterOperator.EQ, aTokensSeg[i].getText()));
+				}
+				var SegValues = MtSeg
+					.filter(filter => filter.sPath === 'MARKET_SEG' && filter.sOperator === 'EQ')
+					.map(filter => filter.oValue1);
+				
+				//Sign	
+				var aTokensSign = this.byId("idMSign").getTokens();
+				var Msign = [];
+				for (var i in aTokensSign) {
+					Msign.push(new sap.ui.model.Filter("MKT_SIGN", sap.ui.model.FilterOperator.EQ, aTokensSign[i].getText()));
+				}
+				var SignValues = Msign
+					.filter(filter => filter.sPath === 'MKT_SIGN' && filter.sOperator === 'EQ')
+					.map(filter => filter.oValue1);
+				//Key
+				var aTokensKey = this.byId("idMKey").getTokens();
+				var Mkey = [];
+				for (var i in aTokensKey) {
+					Mkey.push(new sap.ui.model.Filter("MT_KEY", sap.ui.model.FilterOperator.EQ, aTokensKey[i].getText()));
+				}
+				var KeyValues = Mkey
+					.filter(filter => filter.sPath === 'MT_KEY' && filter.sOperator === 'EQ')
+					.map(filter => filter.oValue1);
+				// Cus des
 				//var McusDesc = this.getView().byId("idMcusDesc").mProperties.value;
 				var aTokensCus = this.byId("idMcusDesc").getTokens();
 				var McusDesc = [];
@@ -1059,7 +1200,8 @@ sap.ui.define([
 				var CusValues = McusDesc
 					.filter(filter => filter.sPath === 'SOLD_TO_DESC' && filter.sOperator === 'EQ')
 					.map(filter => filter.oValue1);
-					
+				
+				//Mat des
 				var aTokens = this.byId("idMmatDesc").getTokens();
 				var MmatDesc = [];
 				for (var i in aTokens) {
@@ -1132,15 +1274,15 @@ sap.ui.define([
 						CREATEDT: lCdatet,
 						CHANGEDF: lChdatef,
 						CHANGEDT: lChdatet,
-						MTKEY: Mkey,
+						MTKEY: KeyValues,
 						MTCUS: Mcus,
 						MTMAT: Mmat,
 						MTCUSDESC: CusValues,
 						MTMATDESC: maktxValues,
-						MTSEG: MtSeg,
-						MTCOM: Mcom,
-						MTUSR: Musr,
-						MSIGNOFF: Msign,
+						MTSEG: SegValues,
+						MTCOM: ComValues,
+						MTUSR: UsrValues,
+						MSIGNOFF: SignValues,
 						MSEGMENT: Mseg
 					};
 					var oTableModel = new JSONModel();

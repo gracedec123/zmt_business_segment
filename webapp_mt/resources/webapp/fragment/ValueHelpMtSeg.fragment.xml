@@ -3,10 +3,11 @@
 		id="selectDialogMtSeg"
 		title="{i18n>MktSeg}"
 		items="{oMtSeg>/}"
-		class="F4height"
+		class="F4height_multi"
 		search=".onValueHelpSearchMtSeg"
 		confirm=".onValueHelpCloseMtSeg"
-		cancel=".onValueHelpCloseMtSeg">
+		cancel=".onValueHelpCloseMtSeg"
+		multiSelect="true">
 		<StandardListItem
 			iconDensityAware="false"
 			iconInset="false"

@@ -3,10 +3,11 @@
 		id="selectDialogMUsr"
 		title="{i18n>lastModifiedBy}"
 		items="{oUsr>/}"
-		class="F4height"
+		class="F4height_multi"
 		search=".onValueHelpSearchUsr"
 		confirm=".onValueHelpCloseUsr"
-		cancel=".onValueHelpCloseUsr">
+		cancel=".onValueHelpCloseUsr"
+		multiSelect="true">
 		<StandardListItem
 			iconDensityAware="false"
 			iconInset="false"

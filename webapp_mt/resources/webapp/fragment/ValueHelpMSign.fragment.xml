@@ -3,10 +3,11 @@
 		id="selectDialog"
 		title="Mkting Signoff"
 		items="{oSign>/}"
-		class="F4height"
+		class="F4height_multi"
 		search=".onValueHelpSearch"
 		confirm=".onValueHelpClose"
-		cancel=".onValueHelpClose">
+		cancel=".onValueHelpClose"
+		multiSelect="true">
 		<StandardListItem
 			iconDensityAware="false"
 			iconInset="false"

@@ -13,7 +13,7 @@
 						<Button icon="sap-icon://download" press="onDataExport"/>
 					</Toolbar>
 					<VBox class="tableScrollContainer">
-						<Table id="tableId1" inset="false" class="sapUiSizeCompact fixedTableHeader" growing="true" growingThreshold="20"
+						<Table id="tableId1" inset="false" class="sapUiSizeCompact fixedTableHeader" growing="true" growingThreshold="1000"
 							growingScrollToLoad="false" items="{tableModelFinal>/}">
 							<columns>
 								<Column width="65%">

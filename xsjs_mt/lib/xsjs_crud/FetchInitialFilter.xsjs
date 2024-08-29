@@ -25,8 +25,12 @@ var baseQuery =
 var queryParams = [];
 // Check and add conditions dynamically
 if (key && key !== '') {
-	baseQuery += ' AND "MT_KEY" = ?';
-	queryParams.push(key);
+//	baseQuery += ' AND "MT_KEY" = ?';
+//	queryParams.push(key);
+	if (key.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("MT_KEY") IN (' + key.map(() => '?').join(',') + ')';
+		queryParams.push(...key);
+	}
 }
 if (cus && cus !== '') {
 	baseQuery += ' AND "SOLD_TO" = ?';
@@ -53,12 +57,20 @@ if (matDesc && matDesc !== '') {
 	}
 }
 if (mtSeg && mtSeg !== '') {
-	baseQuery += ' AND TO_VARCHAR("MARKET_SEG") = ?';
-	queryParams.push(mtSeg);
+//	baseQuery += ' AND TO_VARCHAR("MARKET_SEG") = ?';
+//	queryParams.push(mtSeg);
+	if (mtSeg.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("MARKET_SEG") IN (' + mtSeg.map(() => '?').join(',') + ')';
+		queryParams.push(...mtSeg);
+	}
 }
 if (com && com !== '' && com !== "=") {
-	baseQuery += ' AND TO_VARCHAR("COMMENTS") = ?';
-	queryParams.push(com);
+//	baseQuery += ' AND TO_VARCHAR("COMMENTS") = ?';
+//	queryParams.push(com);
+	if (com.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("COMMENTS") IN (' + com.map(() => '?').join(',') + ')';
+		queryParams.push(...com);
+	}
 } else {
 	if (com === "=") {
 		baseQuery += ' AND TO_VARCHAR("COMMENTS") IS NULL';
@@ -66,16 +78,28 @@ if (com && com !== '' && com !== "=") {
 }
 
 if (usr && usr !== '') {
-	baseQuery += ' AND TO_VARCHAR("LAST_MODIFIED_USER") = ?';
-	queryParams.push(usr);
+//	baseQuery += ' AND TO_VARCHAR("LAST_MODIFIED_USER") = ?';
+//	queryParams.push(usr);
+	if (usr.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("LAST_MODIFIED_USER") IN (' + usr.map(() => '?').join(',') + ')';
+		queryParams.push(...usr);
+	}
 }
 if (segm && segm !== '') {
-	baseQuery += ' AND "MT_SEG_ID_SAP" = ?';
-	queryParams.push(segm);
+//	baseQuery += ' AND "MT_SEG_ID_SAP" = ?';
+//	queryParams.push(segm);
+	if (segm.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("MT_SEG_ID") IN (' + segm.map(() => '?').join(',') + ')';
+		queryParams.push(...segm);
+	}
 }
 if (sign && sign !== '' && sign !== "=") {
-	baseQuery += ' AND TO_VARCHAR("MKT_SIGN") = ?';
-	queryParams.push(sign);
+//	baseQuery += ' AND TO_VARCHAR("MKT_SIGN") = ?';
+//	queryParams.push(sign);
+	if (sign.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("MKT_SIGN") IN (' + sign.map(() => '?').join(',') + ')';
+		queryParams.push(...sign);
+	}
 } else {
 	if (sign === "=") {
 		baseQuery += ' AND TO_VARCHAR("MKT_SIGN") IS NULL';

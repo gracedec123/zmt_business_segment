@@ -10,11 +10,11 @@
 						<fb:filterGroupItems>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Mkey" label="MT Business Key" labelTooltip="MT Business Key">
 								<fb:control>
-									<Input id="idMKey" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpKey" showSuggestion="true" suggestionItems="{oTable>/}">
+									<MultiInput id="idMKey" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpKey" showSuggestion="true" suggestionItems="{oTable>/}">
 										<suggestionItems>
 											<core:Item text="{oTable>MT_KEY}"/>
 										</suggestionItems>
-									</Input>
+									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
 						<!--	<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldTo" label="Customer Sold-To (ID)" labelTooltip="Customer Sold-To (ID)">
@@ -55,29 +55,29 @@
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="MarketingSegment" label="Marketing Segment" labelTooltip="Marketing Segment">
 								<fb:control>
-									<Input id="idMtseg" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMtSeg" showSuggestion="true" suggestionItems="{oMtSeg>/}">
+									<MultiInput id="idMtseg" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMtSeg" showSuggestion="true" suggestionItems="{oMtSeg>/}">
 										<suggestionItems>
 											<core:Item text="{oMtSeg>MARKET_SEG}"/>
 										</suggestionItems>
-									</Input>
+									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Comments" label="Comments" labelTooltip="Comments">
 								<fb:control>
-									<Input id="idMcom" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMCom" showSuggestion="true" suggestionItems="{oCom>/}">
+									<MultiInput id="idMcom" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMCom" showSuggestion="true" suggestionItems="{oCom>/}">
 										<suggestionItems>
 											<core:Item text="{oCom>COMMENTS}"/>
 										</suggestionItems>
-									</Input>
+									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Last Modified By" label="Last Modified By" labelTooltip="Last Modified By">
 								<fb:control>
-									<Input id="idMUsr" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpUsr" showSuggestion="true" suggestionItems="{oUsr>/}">
+									<MultiInput id="idMUsr" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpUsr" showSuggestion="true" suggestionItems="{oUsr>/}">
 										<suggestionItems>
 											<core:Item text="{oUsr>LAST_MODIFIED_USER}"/>
 										</suggestionItems>
-									</Input>
+									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="dateRange" label="Creation Date" labelTooltip="Creation Date">
@@ -92,19 +92,19 @@
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Msign" label="Mkting Signoff" labelTooltip="Mkting Signoff">
 								<fb:control>
-									<Input id="idMSign" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpSign" showSuggestion="true" suggestionItems="{oSign>/}">
+									<MultiInput id="idMSign" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpSign" showSuggestion="true" suggestionItems="{oSign>/}">
 										<suggestionItems>
 											<core:Item text="{oSign>MKT_SIGN}"/>
 										</suggestionItems>
-									</Input>
+									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Mseg" label="MT Biz_seg_ID" labelTooltip="Business Segment">
 								<fb:control>
 									<Label text="MT Biz Seg"/>
-									<ComboBox id="comboBox1" items="{oMTSeg>/}">
-										<core:ListItem key="{oMTSeg>MT_ID}" text="{oMTSeg>MT_ID} {oMTSeg>MT_DESC}"/>
-									</ComboBox>
+									<MultiComboBox id="comboBox1" items="{oMTSeg>/}">
+										<core:Item key="{oMTSeg>MT_ID}" text="{oMTSeg>MT_ID} {oMTSeg>MT_DESC}"/>
+									</MultiComboBox>
 								</fb:control>
 							</fb:FilterGroupItem>
 						</fb:filterGroupItems>

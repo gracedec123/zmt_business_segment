@@ -3,10 +3,11 @@
 		id="selectDialogKey"
 		title="MT Business Key"
 		items="{oTable>/}"
-		class="F4height"
+		class="F4height_multi"
 		search=".onValueHelpSearchKey"
 		confirm=".onValueHelpCloseKey"
-		cancel=".onValueHelpCloseKey">
+		cancel=".onValueHelpCloseKey"
+		multiSelect="true">
 		<StandardListItem
 			iconDensityAware="false"
 			iconInset="false"

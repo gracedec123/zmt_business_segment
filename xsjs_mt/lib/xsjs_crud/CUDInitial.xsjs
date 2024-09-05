@@ -206,93 +206,146 @@ async function insertUpdateSave(data) {
 	}));
 }
 async function insertUpdateFinal(dataArray) {
+	var query =
+		'UPDATE "ZMT_Final_data" SET "MT_SEG_ID" = ?, "MT_SEG_DESC" = ?, "LAST_MODIFIED_USER" = ?, 		"LAST_MODIFIED_TIMESTAMP" = ? WHERE "SOLD_TO" = ? AND "MATNR" = ?';
+
+	var insquery = 'INSERT INTO "ZMT_Final_data" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+	var inspstmt;
 	var pstmt;
-	var query;
 
 	try {
 		await conn.setAutoCommit(false); // Start transaction
 
-		// Prepare the UPSERT statement
-		//( "SOLD_TO", "MATNR", "MAKTX", "SOLD_TO_DESC", "MT_SEG_ID", "MT_SEG_DESC", "MARKET_SEG", "LAST_MODIFIED_USER", "LAST_MODIFIED_TIMESTAMP") 
-		query = 'INSERT INTO "ZMT_Final_data" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-		//WHERE "SOLD_TO" = ?';
-		pstmt = await conn.prepareStatement(query);
-
 		for (var i = 0; i < dataArray.length; i++) {
 			var data = dataArray[i];
 
-			// Set parameters for UPSERT
-			pstmt.setString(1, data.SOLD_TO);
-			pstmt.setString(2, data.MATNR || null); // Use null if empty
-			pstmt.setString(3, data.MAKTX || null); // Use null if empty
-			pstmt.setString(4, data.SOLD_TO_DESC || null); // Use null if empty
-			pstmt.setString(5, data.MT_SEG_ID || null); // Use null if empty
-			pstmt.setString(6, data.MT_SEG_DESC || null); // Use null if empty
-			pstmt.setString(7, data.MARKET_SEG || null); // Use null if empty
-			pstmt.setString(8, data.LAST_MODIFIED_USER || null); // Use null if empty
-			pstmt.setString(9, data.LAST_MODIFIED_TIMESTAMP || null); // Use null if empty
+			// Check if the record exists
+			var existsQuery = 'SELECT COUNT(*) FROM "ZMT_Final_data" WHERE "SOLD_TO" = ? AND "MATNR" = ?';
+			var existsPstmt = await conn.prepareStatement(existsQuery);
+			existsPstmt.setString(1, data.SOLD_TO);
+			existsPstmt.setString(2, data.MATNR);
+			var resultSet = await existsPstmt.executeQuery();
+			resultSet.next();
+			var count = resultSet.getInt(1);
+			await existsPstmt.close();
 
-			pstmt.addBatch(); // Add to batch
+			if (count > 0) {
+				// Update operation
+				if (!pstmt) {
+					pstmt = await conn.prepareStatement(query);
+				}
+				pstmt.setString(1, data.MT_SEG_ID);
+				pstmt.setString(2, data.MT_SEG_DESC);
+				pstmt.setString(3, data.LAST_MODIFIED_USER);
+				pstmt.setString(4, data.LAST_MODIFIED_TIMESTAMP);
+				pstmt.setString(5, data.SOLD_TO);
+				pstmt.setString(6, data.MATNR);
+
+				pstmt.addBatch(); // Add update to batch
+			} else {
+				// Insert operation
+				if (!inspstmt) {
+					inspstmt = await conn.prepareStatement(insquery);
+				}
+				inspstmt.setString(1, data.SOLD_TO);
+				inspstmt.setString(2, data.MATNR);
+				inspstmt.setString(3, data.MAKTX);
+				inspstmt.setString(4, data.SOLD_TO_DESC);
+				inspstmt.setString(5, data.MT_SEG_ID);
+				inspstmt.setString(6, data.MT_SEG_DESC);
+				inspstmt.setString(7, data.MARKET_SEG);
+				inspstmt.setString(8, data.LAST_MODIFIED_USER);
+				inspstmt.setString(9, data.LAST_MODIFIED_TIMESTAMP);
+
+				inspstmt.addBatch(); // Add insert to batch
+			}
 		}
 
-		// Execute the batch
-		var updateCounts = await pstmt.executeBatch(); // Execute batch
+		// Execute both batches
+		if (pstmt) {
+			var updateCounts = await pstmt.executeBatch(); // Execute update batch
+		}
+		if (inspstmt) {
+			var insertCounts = await inspstmt.executeBatch(); // Execute insert batch
+		}
+
 		await conn.commit(); // Commit transaction
 
-		$.response.status = $.net.http.OK;
-		$.response.setBody(JSON.stringify({
+		console.log(`Update counts: ${updateCounts?.length || 0}, Insert counts: ${insertCounts?.length || 0}`);
+
+		return {
 			success: true,
-			counts: updateCounts
-		}));
+			counts: updateCounts,
+			countsins: insertCounts
+		};
 	} catch (error) {
-		console.error("Error during batch UPSERT operation:", error);
+		console.error("Error during batch operation:", error);
 		await conn.rollback(); // Rollback on error
-		$.response.status = $.net.http.INTERNAL_SERVER_ERROR;
-		$.response.setBody(JSON.stringify({
+		return {
 			success: false,
 			message: error.message
-		}));
+		};
 	} finally {
 		if (pstmt) {
 			await pstmt.close(); // Close prepared statement
 		}
+		if (inspstmt) {
+			await inspstmt.close(); // Close prepared statement
+		}
 	}
-	// Use parameterized queries to prevent SQL injection
-	/*	var query = 'UPSERT "ZMT_Final_data" VALUES(?,?,?,?,?,?,?,?,?) WHERE "MATNR" = ?';
-		var pstmt = await conn.prepareStatement(query);
 
-		pstmt.setString(1, data.MATNR);
-		if (data.MAKTX != "") {
-			pstmt.setString(2, data.MAKTX);
-		};
-		if (data.SOLD_TO != "") {
-			pstmt.setString(3, data.SOLD_TO);
-		};
-		if (data.SOLD_TO_DESC != "") {
-			pstmt.setString(4, data.SOLD_TO_DESC);
-		};
-		if (data.MT_SEG_ID != "") {
-			pstmt.setString(5, data.MT_SEG_ID);
-		};
-		if (data.MT_SEG_DESC != "") {
-			pstmt.setString(6, data.MT_SEG_DESC);
-		};
-		if (data.MARKET_SEG != "") {
-			pstmt.setString(7, data.MARKET_SEG);
-		};
-		if (data.LAST_MODIFIED_USER != "") {
-			pstmt.setString(8, data.LAST_MODIFIED_USER);
-		};
-		if (data.LAST_MODIFIED_TIMESTAMP != "") {
-			pstmt.setString(9, data.LAST_MODIFIED_TIMESTAMP);
-		};
-		pstmt.setString(10, data.MATNR);
-		// Execute the prepared statement
-		await pstmt.execute();
-		$.response.status = $.net.http.OK;
-		$.response.setBody(JSON.stringify({
-			success: true
-		}));*/
+	/*	var pstmt;
+		var query;
+
+		try {
+			await conn.setAutoCommit(false); // Start transaction
+
+			// Prepare the UPSERT statement
+			//( "SOLD_TO", "MATNR", "MAKTX", "SOLD_TO_DESC", "MT_SEG_ID", "MT_SEG_DESC", "MARKET_SEG", "LAST_MODIFIED_USER", "LAST_MODIFIED_TIMESTAMP") 
+			query = 'INSERT INTO "ZMT_Final_data" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+			//WHERE "SOLD_TO" = ?';
+			pstmt = await conn.prepareStatement(query);
+
+			for (var i = 0; i < dataArray.length; i++) {
+				var data = dataArray[i];
+
+				// Set parameters for UPSERT
+				pstmt.setString(1, data.SOLD_TO);
+				pstmt.setString(2, data.MATNR || null); // Use null if empty
+				pstmt.setString(3, data.MAKTX || null); // Use null if empty
+				pstmt.setString(4, data.SOLD_TO_DESC || null); // Use null if empty
+				pstmt.setString(5, data.MT_SEG_ID || null); // Use null if empty
+				pstmt.setString(6, data.MT_SEG_DESC || null); // Use null if empty
+				pstmt.setString(7, data.MARKET_SEG || null); // Use null if empty
+				pstmt.setString(8, data.LAST_MODIFIED_USER || null); // Use null if empty
+				pstmt.setString(9, data.LAST_MODIFIED_TIMESTAMP || null); // Use null if empty
+
+				pstmt.addBatch(); // Add to batch
+			}
+
+			// Execute the batch
+			var updateCounts = await pstmt.executeBatch(); // Execute batch
+			await conn.commit(); // Commit transaction
+
+			$.response.status = $.net.http.OK;
+			$.response.setBody(JSON.stringify({
+				success: true,
+				counts: updateCounts
+			}));
+		} catch (error) {
+			console.error("Error during batch UPSERT operation:", error);
+			await conn.rollback(); // Rollback on error
+			$.response.status = $.net.http.INTERNAL_SERVER_ERROR;
+			$.response.setBody(JSON.stringify({
+				success: false,
+				message: error.message
+			}));
+		} finally {
+			if (pstmt) {
+				await pstmt.close(); // Close prepared statement
+			}
+		}*/
 }
 
 async function deleteInitial(data) {

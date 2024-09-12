@@ -17,15 +17,6 @@
 									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
-						<!--	<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldTo" label="Customer Sold-To (ID)" labelTooltip="Customer Sold-To (ID)">
-								<fb:control>
-									<Input id="idMcus" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCus" showSuggestion="true" suggestionItems="{oCus>/}">
-										<suggestionItems>
-											<core:Item text="{oCus>SOLD_TO}"/>
-										</suggestionItems>
-									</Input>
-								</fb:control>
-							</fb:FilterGroupItem>-->
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldToDesc" label="Customer Sold-To Desc." labelTooltip="Customer Sold-To Desc.">
 								<fb:control>
 									<MultiInput id="idMcusDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCusDesc" showSuggestion="true" suggestionItems="{oCusDesc>/}">
@@ -35,15 +26,6 @@
 									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
-					<!--		<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material" label="Material ID" labelTooltip="Material ID">
-								<fb:control>
-									<Input id="idMmat" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMat" showSuggestion="true" suggestionItems="{oMat>/}">
-										<suggestionItems>
-											<core:Item text="{oMat>MATNR}"/>
-										</suggestionItems>
-									</Input>
-								</fb:control> 
-							</fb:FilterGroupItem>-->
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material Desc" label="Material Desc." labelTooltip="Material Desc">
 								<fb:control>
 									<MultiInput id="idMmatDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMatDesc" showSuggestion="true" suggestionItems="{oMatDesc>/}">
@@ -97,6 +79,14 @@
 											<core:Item text="{oSign>MKT_SIGN}"/>
 										</suggestionItems>
 									</MultiInput>
+								</fb:control>
+							</fb:FilterGroupItem>
+							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="MsegSap" label="MT Biz_seg_ID_SAP" labelTooltip="SAP Business Segment">
+								<fb:control>
+									<Label text="MT Biz Seg SAP"/>
+									<MultiComboBox id="comboBoxS" items="{oMTSegSap>/}">
+										<core:Item key="{oMTSegSap>MT_ID}" text="{oMTSegSap>MT_ID} {oMTSegSap>MT_DESC}"/>
+									</MultiComboBox>
 								</fb:control>
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Mseg" label="MT Biz_seg_ID" labelTooltip="Business Segment">

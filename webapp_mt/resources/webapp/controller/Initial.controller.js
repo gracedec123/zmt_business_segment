@@ -76,6 +76,7 @@ sap.ui.define([
 				this.getView().byId("idMcom").setValue("");
 				this.getView().byId("idMUsr").setValue("");
 				this.byId("comboBox1").setSelectedKeys("");
+				this.byId("comboBoxS").setSelectedKeys("");
 				this.getView().byId("idChdate").setValue("");
 				this.getView().byId("idCdate").setValue("");
 				this.getView().byId("Search").setValue("");
@@ -106,7 +107,8 @@ sap.ui.define([
 
 			onValueHelpSearchKey: function (oEvent) {
 				var sValue = oEvent.getParameter("value");
-				var oFilter = new Filter("MT_KEY", FilterOperator.Contains, sValue);
+				var oFilter = new Filter(
+					[new Filter("MT_KEY", FilterOperator.Contains, sValue)])
 				oEvent.getSource().getBinding("items").filter([oFilter]);
 			},
 
@@ -122,7 +124,6 @@ sap.ui.define([
 						}));
 					});
 				}
-				//	this.byId("idMKey").setValue(oSelectedItem.getTitle());
 			},
 			onValueHelpUsr: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -758,7 +759,6 @@ sap.ui.define([
 				}
 			},
 			onTransfer: function () {
-				this.getRouter().navTo("RouteView4");
 				const batchSize = 1000;
 				var that = this;
 				var busyDialog = new sap.m.BusyDialog();
@@ -767,6 +767,12 @@ sap.ui.define([
 				var aTableData = oTableModel.getData();
 				var items = oTable.getSelectedItems();
 				var batches = [];
+				
+				if (items.length === 0) {
+					MessageToast.show("Please Select Entries before Transfer");
+					that._oDialog.close();
+				} else {
+				this.getRouter().navTo("RouteView4");
 				for (var i = 0; i < items.length; i++) {
 					var data = items[i].getBindingContextPath();
 					var len = data.length;
@@ -805,7 +811,7 @@ sap.ui.define([
 
 					}
 				}
-
+				
 				async function processBatches() {
 					const totalEntries = batches.length;
 					const totalBatches = Math.ceil(totalEntries / batchSize);
@@ -844,6 +850,7 @@ sap.ui.define([
 							busyDialog.close();
 						}.bind(this)
 					});*/
+			}
 			},
 			loadTableDataFinal: function () {
 
@@ -1142,6 +1149,8 @@ sap.ui.define([
 				//var Musr = this.getView().byId("idMUsr").mProperties.value;
 				var oCombo = this.byId("comboBox1");
 				var Mseg = oCombo.getSelectedKeys();
+				var oComboS = this.byId("comboBoxS");
+				var MsegS = oComboS.getSelectedKeys();
 				//User 
 				var aTokensUsr = this.byId("idMUsr").getTokens();
 				var Musr = [];
@@ -1151,7 +1160,7 @@ sap.ui.define([
 				var UsrValues = Musr
 					.filter(filter => filter.sPath === 'LAST_MODIFIED_USER' && filter.sOperator === 'EQ')
 					.map(filter => filter.oValue1);
-					
+
 				//Comments
 				var aTokensCom = this.byId("idMcom").getTokens();
 				var Mcom = [];
@@ -1161,7 +1170,7 @@ sap.ui.define([
 				var ComValues = Mcom
 					.filter(filter => filter.sPath === 'COMMENTS' && filter.sOperator === 'EQ')
 					.map(filter => filter.oValue1);
-					
+
 				//Segment
 				var aTokensSeg = this.byId("idMtseg").getTokens();
 				var MtSeg = [];
@@ -1171,7 +1180,7 @@ sap.ui.define([
 				var SegValues = MtSeg
 					.filter(filter => filter.sPath === 'MARKET_SEG' && filter.sOperator === 'EQ')
 					.map(filter => filter.oValue1);
-				
+
 				//Sign	
 				var aTokensSign = this.byId("idMSign").getTokens();
 				var Msign = [];
@@ -1200,7 +1209,7 @@ sap.ui.define([
 				var CusValues = McusDesc
 					.filter(filter => filter.sPath === 'SOLD_TO_DESC' && filter.sOperator === 'EQ')
 					.map(filter => filter.oValue1);
-				
+
 				//Mat des
 				var aTokens = this.byId("idMmatDesc").getTokens();
 				var MmatDesc = [];
@@ -1283,7 +1292,8 @@ sap.ui.define([
 						MTCOM: ComValues,
 						MTUSR: UsrValues,
 						MSIGNOFF: SignValues,
-						MSEGMENT: Mseg
+						MSEGMENT: Mseg,
+						MSEGMENTS: MsegS
 					};
 					var oTableModel = new JSONModel();
 					this.getView().setModel(oTableModel, "tableModel");
@@ -1318,38 +1328,39 @@ sap.ui.define([
 				busyDialog.open();
 				var oTable = new JSONModel();
 				this.getView().setModel(oTable, "oTable");
+				oTable.setSizeLimit(50000);
 
 				var oSign = new JSONModel();
 				this.getView().setModel(oSign, "oSign");
-				oSign.setSizeLimit(5000);
+				oSign.setSizeLimit(50000);
 
 				var oCus = new JSONModel();
 				this.getView().setModel(oCus, "oCus");
-				oCus.setSizeLimit(5000);
+				oCus.setSizeLimit(50000);
 
 				var oCusDesc = new JSONModel();
 				this.getView().setModel(oCusDesc, "oCusDesc");
-				oCusDesc.setSizeLimit(5000);
+				oCusDesc.setSizeLimit(50000);
 
 				var oMat = new JSONModel();
 				this.getView().setModel(oMat, "oMat");
-				oMat.setSizeLimit(5000);
+				oMat.setSizeLimit(50000);
 
 				var oMatDesc = new JSONModel();
 				this.getView().setModel(oMatDesc, "oMatDesc");
-				oMatDesc.setSizeLimit(5000);
+				oMatDesc.setSizeLimit(50000);
 
 				var oMtSeg = new JSONModel();
 				this.getView().setModel(oMtSeg, "oMtSeg");
-				oMtSeg.setSizeLimit(5000);
-
+				oMtSeg.setSizeLimit(50000);
+				
 				var oCom = new JSONModel();
 				this.getView().setModel(oCom, "oCom");
-				oCom.setSizeLimit(5000);
+				oCom.setSizeLimit(50000);
 
 				var oUsr = new JSONModel();
 				this.getView().setModel(oUsr, "oUsr");
-				oUsr.setSizeLimit(5000);
+				oUsr.setSizeLimit(50000);
 
 				this.getView().setModel(oTableModel, "tableModel");
 				$.ajax({
@@ -1367,6 +1378,7 @@ sap.ui.define([
 						oTableModel.setData(data);
 						oTable.setData(data);
 						var aTable = oTable.oData;
+						var KeyArray = new Array();
 						var SignArray = new Array();
 						var CusArray = new Array();
 						var CusDescArray = new Array();
@@ -1375,6 +1387,7 @@ sap.ui.define([
 						var MtSegArray = new Array();
 						var ComArray = new Array();
 						var UsrArray = new Array();
+						var oAKey = new Array();
 						var oASign = new Array();
 						var oACus = new Array();
 						var oACusDesc = new Array();
@@ -1384,6 +1397,13 @@ sap.ui.define([
 						var oACom = new Array();
 						var oAUsr = new Array();
 						for (var i = 0; i < aTable.length; i++) {
+							if (oAKey.indexOf(aTable[i].MT_KEY) === -1) {
+								var oEntry = {
+									MT_KEY: aTable[i].MT_KEY
+								}
+								oAKey.push(aTable[i].MT_KEY);
+								KeyArray.push(oEntry);
+							}
 							if (oASign.indexOf(aTable[i].MKT_SIGN) === -1) {
 								var oEntry = {
 									MKT_SIGN: aTable[i].MKT_SIGN
@@ -1443,6 +1463,7 @@ sap.ui.define([
 								UsrArray.push(oEntry_Usr);
 							}
 						}
+						oTable.setData(KeyArray);
 						oSign.setData(SignArray);
 						oCus.setData(CusArray);
 						oCusDesc.setData(CusDescArray);
@@ -1456,6 +1477,8 @@ sap.ui.define([
 				});
 				var oMTSeg = new JSONModel();
 				this.getView().setModel(oMTSeg, "oMTSeg");
+				var oMTSegSap = new JSONModel();
+				this.getView().setModel(oMTSegSap, "oMTSegSap");
 				$.ajax({
 					url: "/xsjs_crud/FetchMT.xsjs",
 					method: "GET",
@@ -1466,6 +1489,8 @@ sap.ui.define([
 						var len = dataMM.length;
 						oMTSeg.setSizeLimit(len);
 						oMTSeg.setData(dataMM);
+						oMTSegSap.setSizeLimit(len);
+						oMTSegSap.setData(dataMM);
 					}
 				})
 			},
@@ -1497,7 +1522,7 @@ sap.ui.define([
 				//		this.oOriginalItem.MT_SEG_ID = "53D";
 				//	} else {
 				var datavalue = JSON.stringify(num);
-				var datavalue1 = JSON.stringify(that.oOriginalItem.MT_SEG_ID);
+				var datavalue1 = JSON.stringify(that.oOriginalItem.MT_SEG_ID_SAP);
 				$.ajax({
 					url: "/xsjs_crud/FetchProfit.xsjs",
 					method: "GET",
@@ -1584,7 +1609,7 @@ sap.ui.define([
 				oUpdatedItem.MT_SEG_ID = oKey;
 				oUpdatedItem.MT_SEG_DESC = oText;
 				if (!oUpdatedItem.MT_KEY || !oUpdatedItem.SOLD_TO || !oUpdatedItem.SOLD_TO_DESC || !oUpdatedItem.MATNR || !oUpdatedItem.MAKTX ||
-					!oUpdatedItem.MT_SEG_ID || !oUpdatedItem.MT_SEG_DESC || !oUpdatedItem.MARKET_SEG) {
+					!oUpdatedItem.MT_SEG_ID || !oUpdatedItem.MT_SEG_DESC) { //|| !oUpdatedItem.MARKET_SEG) {
 					MessageToast.show("Please fill in all mandatory fields!");
 					return;
 				}

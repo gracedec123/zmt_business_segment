@@ -23,7 +23,7 @@
 					<Text id="ip5" text="{/MAKTX}"/>
 				</l:VerticalLayout>
 				<l:VerticalLayout width="100%">
-					<Label text="{i18n>MktSeg}" required="true"/>
+					<Label text="{i18n>MktSeg}"/>
 					<Text id="ip6" text="{/MARKET_SEG}"/>
 				</l:VerticalLayout>
 				<l:VerticalLayout width="100%">
@@ -38,11 +38,11 @@
 						</ComboBox>
 					</l:VerticalLayout>
 					<l:VerticalLayout width="100%">
-						<Label text="{i18n>Comments}" required="true"/>
+						<Label text="{i18n>Comments}"/>
 						<Input id="ip9" value="{/COMMENTS}" editable="true"/>
 					</l:VerticalLayout>
 					<l:VerticalLayout width="100%">
-						<Label text="{i18n>Mktoff}" required="true"/>
+						<Label text="{i18n>Mktoff}"/>
 						<Input id="ip10" value="{/MKT_SIGN}" editable="true"/>
 					</l:VerticalLayout>
 			</l:Grid>

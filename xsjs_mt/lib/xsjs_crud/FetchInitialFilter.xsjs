@@ -14,6 +14,7 @@ var com = data.MTCOM;
 var usr = data.MTUSR;
 var sign = data.MSIGNOFF;
 var segm = data.MSEGMENT;
+var segms = data.MSEGMENTS;
 $.response.contentType = "application/json";
 var conn = await $.hdb.getConnection();
 var baseQuery =
@@ -91,6 +92,12 @@ if (segm && segm !== '') {
 	if (segm.length > 0) {
 		baseQuery += ' AND TO_VARCHAR("MT_SEG_ID") IN (' + segm.map(() => '?').join(',') + ')';
 		queryParams.push(...segm);
+	}
+}
+if (segms && segms !== '') {
+	if (segms.length > 0) {
+		baseQuery += ' AND TO_VARCHAR("MT_SEG_ID_SAP") IN (' + segms.map(() => '?').join(',') + ')';
+		queryParams.push(...segms);
 	}
 }
 if (sign && sign !== '' && sign !== "=") {

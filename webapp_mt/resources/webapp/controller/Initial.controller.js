@@ -767,90 +767,90 @@ sap.ui.define([
 				var aTableData = oTableModel.getData();
 				var items = oTable.getSelectedItems();
 				var batches = [];
-				
+
 				if (items.length === 0) {
 					MessageToast.show("Please Select Entries before Transfer");
 					that._oDialog.close();
 				} else {
-				this.getRouter().navTo("RouteView4");
-				for (var i = 0; i < items.length; i++) {
-					var data = items[i].getBindingContextPath();
-					var len = data.length;
-					var j = data.slice(1, len);
-					for (var key in aTableData[j]) {
-						if (typeof aTableData[j][key] === "number") {
-							aTableData[i][key] = aTableData[j][key].toString();
-						} else if (aTableData[j][key] === null) {
-							aTableData[j][key] = "";
+					this.getRouter().navTo("RouteView4");
+					for (var i = 0; i < items.length; i++) {
+						var data = items[i].getBindingContextPath();
+						var len = data.length;
+						var j = data.slice(1, len);
+						for (var key in aTableData[j]) {
+							if (typeof aTableData[j][key] === "number") {
+								aTableData[i][key] = aTableData[j][key].toString();
+							} else if (aTableData[j][key] === null) {
+								aTableData[j][key] = "";
+							}
+						}
+						var oEntry = {
+							SOLD_TO: aTableData[j].SOLD_TO,
+							MATNR: aTableData[j].MATNR,
+							MAKTX: aTableData[j].MAKTX,
+							SOLD_TO_DESC: aTableData[j].SOLD_TO_DESC,
+							MT_SEG_ID: aTableData[j].MT_SEG_ID,
+							MT_SEG_DESC: aTableData[j].MT_SEG_DESC,
+							MARKET_SEG: aTableData[j].MARKET_SEG,
+							LAST_MODIFIED_USER: that.getView().getModel("oUserModel").getProperty("/userName"),
+							LAST_MODIFIED_TIMESTAMP: that.formatDateobjToBackendDateString(new Date()).slice(0, 10)
+						};
+						batches.push(oEntry);
+					}
+					busyDialog.open();
+					async function sendBatch(batch) {
+						try {
+							const response = await $.ajax({
+								url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdatefinal",
+								method: "POST",
+								contentType: "application/json",
+								data: JSON.stringify(batch)
+							});
+							return response;
+						} catch (error) {
+
 						}
 					}
-					var oEntry = {
-						SOLD_TO: aTableData[j].SOLD_TO,
-						MATNR: aTableData[j].MATNR,
-						MAKTX: aTableData[j].MAKTX,
-						SOLD_TO_DESC: aTableData[j].SOLD_TO_DESC,
-						MT_SEG_ID: aTableData[j].MT_SEG_ID,
-						MT_SEG_DESC: aTableData[j].MT_SEG_DESC,
-						MARKET_SEG: aTableData[j].MARKET_SEG,
-						LAST_MODIFIED_USER: that.getView().getModel("oUserModel").getProperty("/userName"),
-						LAST_MODIFIED_TIMESTAMP: that.formatDateobjToBackendDateString(new Date()).slice(0, 10)
-					};
-					batches.push(oEntry);
-				}
-				busyDialog.open();
-				async function sendBatch(batch) {
-					try {
-						const response = await $.ajax({
+
+					async function processBatches() {
+						const totalEntries = batches.length;
+						const totalBatches = Math.ceil(totalEntries / batchSize);
+						let currentBatch = 0;
+						let failedBatches = [];
+
+						console.log(`Total entries: ${totalEntries}, Total batches: ${totalBatches}`);
+
+						while (currentBatch < totalBatches) {
+							const startIndex = currentBatch * batchSize;
+							const endIndex = Math.min(startIndex + batchSize, totalEntries);
+							const batchChunk = batches.slice(startIndex, endIndex);
+
+							try {
+								await sendBatch(batchChunk);
+								console.log(`Processed batch ${currentBatch + 1} of ${totalBatches} successfully`);
+								currentBatch++;
+							} catch (error) {}
+						}
+
+						// Reload the table data after all batches are processed
+						that.loadTableDataFinal();
+						busyDialog.close();
+					}
+
+					// Start processing batches
+					processBatches();
+
+					/*	$.ajax({
 							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdatefinal",
 							method: "POST",
 							contentType: "application/json",
-							data: JSON.stringify(batch)
-						});
-						return response;
-					} catch (error) {
-
-					}
+							data: JSON.stringify(aTableData[j]),
+							success: function () {
+								this.loadTableDataFinal();
+								busyDialog.close();
+							}.bind(this)
+						});*/
 				}
-				
-				async function processBatches() {
-					const totalEntries = batches.length;
-					const totalBatches = Math.ceil(totalEntries / batchSize);
-					let currentBatch = 0;
-					let failedBatches = [];
-
-					console.log(`Total entries: ${totalEntries}, Total batches: ${totalBatches}`);
-
-					while (currentBatch < totalBatches) {
-						const startIndex = currentBatch * batchSize;
-						const endIndex = Math.min(startIndex + batchSize, totalEntries);
-						const batchChunk = batches.slice(startIndex, endIndex);
-
-						try {
-							await sendBatch(batchChunk);
-							console.log(`Processed batch ${currentBatch + 1} of ${totalBatches} successfully`);
-							currentBatch++;
-						} catch (error) {}
-					}
-
-					// Reload the table data after all batches are processed
-					that.loadTableDataFinal();
-					busyDialog.close();
-				}
-
-				// Start processing batches
-				processBatches();
-
-				/*	$.ajax({
-						url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdatefinal",
-						method: "POST",
-						contentType: "application/json",
-						data: JSON.stringify(aTableData[j]),
-						success: function () {
-							this.loadTableDataFinal();
-							busyDialog.close();
-						}.bind(this)
-					});*/
-			}
 			},
 			loadTableDataFinal: function () {
 
@@ -953,71 +953,102 @@ sap.ui.define([
 						LAST_MODIFIED_USER: this.getView().getModel("oUserModel").getProperty("/userName"),
 						LAST_MODIFIED_TIMESTAMP: this.formatDateobjToBackendDateString(new Date()).slice(0, 10)
 					};
-					FArray.push(oEntry);
-				}
-				$.ajax({
-						url: "/xsjs_crud/FetchM.xsjs",
-						method: "GET",
-						success: function (data) {
-							// Create an object or Map to store the data items
-							const dataMap = new Map(data.map(item => [item.MATNR, item]));
 
-							for (let j = 0; j < FArray.length; j++) {
-								const entry = FArray[j];
-								const numZeros = 18;
-								const num = entry.MATNR;
-								const n = Math.abs(num);
-								const zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
-								const zeroString = Math.pow(10, zeros).toString().substr(1);
-								const paddedNum = (num < 0 ? '-' : '') + zeroString + n;
-								if (entry.MT_SEG_ID_SAP === "531") {
-									entry.MT_SEG_ID = "53D";
-								}
-								if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
-									entry.MT_SEG_ID = "XXX";
-								}
-								// Look up the data item using the padded MATNR value
-								const dataItem = dataMap.get(paddedNum);
-								if (dataItem) {
-									entry.MT_SEG_ID_SAP = dataItem.MVGR4;
-									entry.MT_SEG_DESC_SAP = dataItem.BEZEI;
-								} else {
-									console.warn(`No data found for MATNR ${entry.MATNR}`);
-								}
-							}
+					// Create a Map from FArray to track existing MT_KEYs
+					const dataA = new Map(FArray.map(item => [item.MT_KEY, item]));
 
-							// Update the model with the modified FArray
-							oTableModel.setData(FArray);
-							busyDialog.close();
+					// Check if the size of the Map is zero (FArray is empty)
+					if (dataA.size === 0) {
+						FArray.push(oEntry);
+					} else {
+						// Check if oEntry's MT_KEY is already in the Map
+						if (!dataA.has(oEntry.MT_KEY)) {
+							FArray.push(oEntry);
 						}
-					})
-					/*	for (var j = 0; j < FArray.length - 1; j++) {
-							var numZeros = 18;
-							var num = FArray[j].MATNR;
-							var n = Math.abs(num);
-							var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
-							var zeroString = Math.pow(10, zeros).toString().substr(1);
-							if (num < 0) {
-								zeroString = '-' + zeroString;
+					}
+				}
+				var datam = new JSONModel();
+				this.getView().setModel(datam, "datam");
+				$.ajax({
+					url: "/xsjs_crud/FetchMT.xsjs",
+					method: "GET",
+					success: function (dataMM) {
+						dataMM = dataMM.map(function (item) {
+							return item;
+						});
+						datam.setData(dataMM);
+					}
+				})
+				$.ajax({
+					url: "/xsjs_crud/FetchM.xsjs",
+					method: "GET",
+					success: function (data) {
+						// Create an object or Map to store the data items
+						const dataMap = new Map(data.map(item => [item.MATNR, item]));
+
+						for (let j = 0; j < FArray.length; j++) {
+							const entry = FArray[j];
+							const numZeros = 18;
+							const num = entry.MATNR;
+							const n = Math.abs(num);
+							const zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+							const zeroString = Math.pow(10, zeros).toString().substr(1);
+							const paddedNum = (num < 0 ? '-' : '') + zeroString + n;
+							if (entry.MT_SEG_ID_SAP === "531") {
+								entry.MT_SEG_ID = "53D";
 							}
-							num = zeroString + n;
-							var datavalue = JSON.stringify(num);
-							$.ajax({
-								url: "/xsjs_crud/FetchMM.xsjs",
-								method: "GET",
-								contentType: "application/json",
-								data: ({
-									dataobject: datavalue
-								}),
-								success: function (data) {
-									data = data.map(function (item) {
-										return item;
-									});
-									FArray[j].MT_SEG_ID_SAP = data[0].MVGR4;
-									FArray[j].MT_SEG_DESC_SAP = data[0].BEZEI;
-								}
-							})
-						}*/
+							if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
+								entry.MT_SEG_ID = "XXX";
+							}
+							// Look up the data item using the padded MATNR value
+							var dataMrk = datam.oData;
+							const dataMk = new Map(dataMrk.map(item => [item.MT_ID, item]));
+							const dataItem = dataMap.get(paddedNum);
+							const dataM = dataMk.get(entry.MT_SEG_ID);
+							if (dataM) {
+								entry.MARKET_SEG = dataM.MT_SEG;
+							}
+							if (dataItem) {
+								entry.MT_SEG_ID_SAP = dataItem.MVGR4;
+								entry.MT_SEG_DESC_SAP = dataItem.BEZEI;
+							} else {
+								console.warn(`No data found for MATNR ${entry.MATNR}`);
+							}
+						}
+
+						// Update the model with the modified FArray
+						oTableModel.setData(FArray);
+						busyDialog.close();
+					}
+				})
+
+				/*	for (var j = 0; j < FArray.length - 1; j++) {
+						var numZeros = 18;
+						var num = FArray[j].MATNR;
+						var n = Math.abs(num);
+						var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+						var zeroString = Math.pow(10, zeros).toString().substr(1);
+						if (num < 0) {
+							zeroString = '-' + zeroString;
+						}
+						num = zeroString + n;
+						var datavalue = JSON.stringify(num);
+						$.ajax({
+							url: "/xsjs_crud/FetchMM.xsjs",
+							method: "GET",
+							contentType: "application/json",
+							data: ({
+								dataobject: datavalue
+							}),
+							success: function (data) {
+								data = data.map(function (item) {
+									return item;
+								});
+								FArray[j].MT_SEG_ID_SAP = data[0].MVGR4;
+								FArray[j].MT_SEG_DESC_SAP = data[0].BEZEI;
+							}
+						})
+					}*/
 			},
 			onAdd: function () {
 				if (!this._oDialog) {
@@ -1353,7 +1384,7 @@ sap.ui.define([
 				var oMtSeg = new JSONModel();
 				this.getView().setModel(oMtSeg, "oMtSeg");
 				oMtSeg.setSizeLimit(50000);
-				
+
 				var oCom = new JSONModel();
 				this.getView().setModel(oCom, "oCom");
 				oCom.setSizeLimit(50000);
@@ -1652,27 +1683,27 @@ sap.ui.define([
 				this._oDialog.close();
 			},
 			onSearch: function (event) {
-				var searchTerm = event.getParameter("query");
-				var table = this.byId("tableId1");
-				var binding = table.getBinding("items");
+					var searchTerm = event.getParameter("query");
+					var table = this.byId("tableId1");
+					var binding = table.getBinding("items");
 
-				if (searchTerm === "") {
-					binding.filter([]);
-				} else {
-					var oFilterArr = new Filter([
-						new Filter("MT_KEY", FilterOperator.Contains, searchTerm),
-						new Filter("SOLD_TO", FilterOperator.Contains, searchTerm),
-						new Filter("SOLD_TO_DESC", FilterOperator.Contains, searchTerm),
-						new Filter("MATNR", FilterOperator.Contains, searchTerm),
-						new Filter("MAKTX", FilterOperator.Contains, searchTerm),
-						//	new Filter("MT_SEG_ID", FilterOperator.Contains, searchTerm),
-						//	new Filter("MT_SEG_DESC", FilterOperator.Contains, searchTerm),
-						new Filter("MARKET_SEG", FilterOperator.Contains, searchTerm),
-						new Filter("COMMENTS", FilterOperator.Contains, searchTerm)
-						//	new Filter("MKT_SIGN", FilterOperator.Contains, searchTerm)
-					], false);
-					binding.filter([oFilterArr]);
-				}
+					if (searchTerm === "") {
+						binding.filter([]);
+					} else {
+						var oFilterArr = new Filter([
+							new Filter("MT_KEY", FilterOperator.Contains, searchTerm),
+							new Filter("SOLD_TO", FilterOperator.Contains, searchTerm),
+							new Filter("SOLD_TO_DESC", FilterOperator.Contains, searchTerm),
+							new Filter("MATNR", FilterOperator.Contains, searchTerm),
+							new Filter("MAKTX", FilterOperator.Contains, searchTerm),
+							new Filter("MT_SEG_ID", FilterOperator.Contains, searchTerm),
+							new Filter("MT_SEG_DESC", FilterOperator.Contains, searchTerm),
+							new Filter("MARKET_SEG", FilterOperator.Contains, searchTerm),
+							new Filter("COMMENTS", FilterOperator.Contains, searchTerm),
+							new Filter("MKT_SIGN", FilterOperator.Contains, searchTerm)
+						], false);
+						binding.filter([oFilterArr]);
+					}
 			},
 
 			onDelete: function (oEvent) {

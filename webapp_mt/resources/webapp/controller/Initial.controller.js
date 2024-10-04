@@ -19,7 +19,12 @@ sap.ui.define([
 		return Controller.extend("webapp.webapp.controller.Initial", {
 
 			onInit: function () {
-
+				var oModelMsg = new JSONModel({
+					message: "",
+					messageVisible: false,
+					messageType: "Information"
+				});
+				this.getView().setModel(oModelMsg);
 				var oColumn = this.getView().byId("hideColumn");
 				oColumn.setVisible(!oColumn.getVisible());
 				var oColumn2 = this.getView().byId("hideColumn2");
@@ -68,6 +73,10 @@ sap.ui.define([
 				});
 			},
 			onSync: function () {
+				var oModel = this.getView().getModel();
+				// Clear the message and hide the MessageStrip
+				oModel.setProperty("/message", "");
+				oModel.setProperty("/messageVisible", false);
 				this.getView().byId("idMKey").setValue("");
 				this.getView().byId("idMSign").setValue("");
 				//	this.getView().byId("idMcus").setValue("");
@@ -906,8 +915,13 @@ sap.ui.define([
 			},
 
 			onuploadBtn: function (oEvent) {
+
+				var oModel = this.getView().getModel();
+				// Clear the message and hide the MessageStrip
+				oModel.setProperty("/message", "");
+				oModel.setProperty("/messageVisible", false);
 				//	var oErrors = {};
-				//	var that = this;
+				var that = this;
 				var finalArray = new Array();
 				finalArray = this.excelData;
 				if (!finalArray.length) {
@@ -944,8 +958,8 @@ sap.ui.define([
 						MAKTX: finalArray[i]["Material Desc"],
 						MT_SEG_ID: finalArray[i]["MT Biz_Seg_ID"],
 						MT_SEG_DESC: finalArray[i]["MT Biz_Seg_Desc"],
-						MT_SEG_ID_SAP: finalArray[i]["MT Biz_Seg_ID"],
-						MT_SEG_DESC_SAP: finalArray[i]["MT Biz_Seg_Desc"],
+						MT_SEG_ID_SAP: finalArray[i]["MT Biz_Seg_ID_SAP"],
+						MT_SEG_DESC_SAP: finalArray[i]["MT Biz_Seg_Desc_SAP"],
 						MARKET_SEG: finalArray[i]["Marketing Segment"],
 						COMMENTS: finalArray[i].Comments,
 						MKT_SIGN: finalArray[i]["Mkting Signoff"],
@@ -996,6 +1010,7 @@ sap.ui.define([
 							const paddedNum = (num < 0 ? '-' : '') + zeroString + n;
 							if (entry.MT_SEG_ID_SAP === "531") {
 								entry.MT_SEG_ID = "53D";
+								entry.MT_SEG_DESC = "Media - Excipients";
 							}
 							if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
 								entry.MT_SEG_ID = "XXX";
@@ -1011,6 +1026,21 @@ sap.ui.define([
 							if (dataItem) {
 								entry.MT_SEG_ID_SAP = dataItem.MVGR4;
 								entry.MT_SEG_DESC_SAP = dataItem.BEZEI;
+								const dataMS = dataMk.get(entry.MT_SEG_ID_SAP);
+								if(dataMS){
+								if (dataM.PROFIT !== dataMS.PROFIT) {
+									var oModel = that.getView().getModel();
+									var smes = 'Please enter correct segment for the Key ' + entry.MT_KEY;
+									oModel.setProperty("/message", smes);
+									oModel.setProperty("/messageVisible", true);
+									oModel.setProperty("/messageType", "Error");
+								} else {
+
+									var oModel = that.getView().getModel();
+									// Clear the message and hide the MessageStrip
+									oModel.setProperty("/message", "");
+									oModel.setProperty("/messageVisible", false);
+								}}
 							} else {
 								console.warn(`No data found for MATNR ${entry.MATNR}`);
 							}
@@ -1081,90 +1111,94 @@ sap.ui.define([
 				aTableData[i].Action = 'U';
 			},
 			onSave: function () {
+				var oModel = this.getView().getModel();
+				var sMessage = oModel.getProperty("/message");
+				if (sMessage) {
+					MessageToast.show("There is error message unable to save.");
+				} else {
+					const batchSize = 1000; // Adjust based on server capabilities
+					var oTableModel = this.getView().getModel("tableModel");
+					var aTableData = oTableModel.getData();
+					var busyDialog = new sap.m.BusyDialog();
+					var that = this;
+					busyDialog.open();
 
-				const batchSize = 1000; // Adjust based on server capabilities
-				var oTableModel = this.getView().getModel("tableModel");
-				var aTableData = oTableModel.getData();
-				var busyDialog = new sap.m.BusyDialog();
-				var that = this;
-				busyDialog.open();
+					// Prepare batches
+					var batches = [];
+					for (var i = 0; i < aTableData.length; i++) {
+						for (var key in aTableData[i]) {
+							if (typeof aTableData[i][key] === "number") {
+								aTableData[i][key] = aTableData[i][key].toString();
+							} else if (aTableData[i][key] === null) {
+								aTableData[i][key] = "";
+							}
+						}
 
-				// Prepare batches
-				var batches = [];
-				for (var i = 0; i < aTableData.length; i++) {
-					for (var key in aTableData[i]) {
-						if (typeof aTableData[i][key] === "number") {
-							aTableData[i][key] = aTableData[i][key].toString();
-						} else if (aTableData[i][key] === null) {
-							aTableData[i][key] = "";
+						if (aTableData[i].Action === 'U') {
+							var oEntry = {
+								MT_KEY: aTableData[i].MT_KEY,
+								SOLD_TO: aTableData[i].SOLD_TO,
+								SOLD_TO_DESC: aTableData[i].SOLD_TO_DESC,
+								MATNR: aTableData[i].MATNR,
+								MAKTX: aTableData[i].MAKTX,
+								MT_SEG_ID: aTableData[i].MT_SEG_ID,
+								MT_SEG_DESC: aTableData[i].MT_SEG_DESC,
+								MT_SEG_ID_SAP: aTableData[i].MT_SEG_ID_SAP,
+								MT_SEG_DESC_SAP: aTableData[i].MT_SEG_DESC_SAP,
+								MARKET_SEG: aTableData[i].MARKET_SEG,
+								COMMENTS: aTableData[i].COMMENTS,
+								MKT_SIGN: aTableData[i].MKT_SIGN,
+								CREATED_ON: aTableData[i].CREATED_ON,
+								LAST_MODIFIED_USER: that.getView().getModel("oUserModel").getProperty("/userName"),
+								LAST_MODIFIED_TIMESTAMP: that.formatDateobjToBackendDateString(new Date()).slice(0, 10)
+							};
+							batches.push(oEntry);
 						}
 					}
 
-					if (aTableData[i].Action === 'U') {
-						var oEntry = {
-							MT_KEY: aTableData[i].MT_KEY,
-							SOLD_TO: aTableData[i].SOLD_TO,
-							SOLD_TO_DESC: aTableData[i].SOLD_TO_DESC,
-							MATNR: aTableData[i].MATNR,
-							MAKTX: aTableData[i].MAKTX,
-							MT_SEG_ID: aTableData[i].MT_SEG_ID,
-							MT_SEG_DESC: aTableData[i].MT_SEG_DESC,
-							MT_SEG_ID_SAP: aTableData[i].MT_SEG_ID_SAP,
-							MT_SEG_DESC_SAP: aTableData[i].MT_SEG_DESC_SAP,
-							MARKET_SEG: aTableData[i].MARKET_SEG,
-							COMMENTS: aTableData[i].COMMENTS,
-							MKT_SIGN: aTableData[i].MKT_SIGN,
-							CREATED_ON: aTableData[i].CREATED_ON,
-							LAST_MODIFIED_USER: that.getView().getModel("oUserModel").getProperty("/userName"),
-							LAST_MODIFIED_TIMESTAMP: that.formatDateobjToBackendDateString(new Date()).slice(0, 10)
-						};
-						batches.push(oEntry);
-					}
-				}
-
-				async function sendBatch(batch) {
-					//	console.log("Sending batch:", JSON.stringify(batch)); // Log the batch data
-					try {
-						const response = await $.ajax({
-							url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
-							method: "POST",
-							contentType: "application/json",
-							data: JSON.stringify(batch)
-						});
-						return response;
-					} catch (error) {
-
-					}
-				}
-
-				async function processBatches() {
-					const totalEntries = batches.length;
-					const totalBatches = Math.ceil(totalEntries / batchSize);
-					let currentBatch = 0;
-					let failedBatches = [];
-
-					console.log(`Total entries: ${totalEntries}, Total batches: ${totalBatches}`);
-
-					while (currentBatch < totalBatches) {
-						const startIndex = currentBatch * batchSize;
-						const endIndex = Math.min(startIndex + batchSize, totalEntries);
-						const batchChunk = batches.slice(startIndex, endIndex);
-
+					async function sendBatch(batch) {
+						//	console.log("Sending batch:", JSON.stringify(batch)); // Log the batch data
 						try {
-							await sendBatch(batchChunk);
-							console.log(`Processed batch ${currentBatch + 1} of ${totalBatches} successfully`);
-							currentBatch++;
-						} catch (error) {}
+							const response = await $.ajax({
+								url: "/xsjs_crud/CUDInitial.xsjs?cmd=insertupdate",
+								method: "POST",
+								contentType: "application/json",
+								data: JSON.stringify(batch)
+							});
+							return response;
+						} catch (error) {
+
+						}
 					}
 
-					// Reload the table data after all batches are processed
-					that.loadTableData();
-					busyDialog.close();
+					async function processBatches() {
+						const totalEntries = batches.length;
+						const totalBatches = Math.ceil(totalEntries / batchSize);
+						let currentBatch = 0;
+						let failedBatches = [];
+
+						console.log(`Total entries: ${totalEntries}, Total batches: ${totalBatches}`);
+
+						while (currentBatch < totalBatches) {
+							const startIndex = currentBatch * batchSize;
+							const endIndex = Math.min(startIndex + batchSize, totalEntries);
+							const batchChunk = batches.slice(startIndex, endIndex);
+
+							try {
+								await sendBatch(batchChunk);
+								console.log(`Processed batch ${currentBatch + 1} of ${totalBatches} successfully`);
+								currentBatch++;
+							} catch (error) {}
+						}
+
+						// Reload the table data after all batches are processed
+						that.loadTableData();
+						busyDialog.close();
+					}
+
+					// Start processing batches
+					processBatches();
 				}
-
-				// Start processing batches
-				processBatches();
-
 			},
 			onFilter: function () {
 				var busyDialog = new sap.m.BusyDialog();
@@ -1683,27 +1717,27 @@ sap.ui.define([
 				this._oDialog.close();
 			},
 			onSearch: function (event) {
-					var searchTerm = event.getParameter("query");
-					var table = this.byId("tableId1");
-					var binding = table.getBinding("items");
+				var searchTerm = event.getParameter("query");
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
 
-					if (searchTerm === "") {
-						binding.filter([]);
-					} else {
-						var oFilterArr = new Filter([
-							new Filter("MT_KEY", FilterOperator.Contains, searchTerm),
-							new Filter("SOLD_TO", FilterOperator.Contains, searchTerm),
-							new Filter("SOLD_TO_DESC", FilterOperator.Contains, searchTerm),
-							new Filter("MATNR", FilterOperator.Contains, searchTerm),
-							new Filter("MAKTX", FilterOperator.Contains, searchTerm),
-							new Filter("MT_SEG_ID", FilterOperator.Contains, searchTerm),
-							new Filter("MT_SEG_DESC", FilterOperator.Contains, searchTerm),
-							new Filter("MARKET_SEG", FilterOperator.Contains, searchTerm),
-							new Filter("COMMENTS", FilterOperator.Contains, searchTerm),
-							new Filter("MKT_SIGN", FilterOperator.Contains, searchTerm)
-						], false);
-						binding.filter([oFilterArr]);
-					}
+				if (searchTerm === "") {
+					binding.filter([]);
+				} else {
+					var oFilterArr = new Filter([
+						new Filter("MT_KEY", FilterOperator.Contains, searchTerm),
+						new Filter("SOLD_TO", FilterOperator.Contains, searchTerm),
+						new Filter("SOLD_TO_DESC", FilterOperator.Contains, searchTerm),
+						new Filter("MATNR", FilterOperator.Contains, searchTerm),
+						new Filter("MAKTX", FilterOperator.Contains, searchTerm),
+						new Filter("MT_SEG_ID", FilterOperator.Contains, searchTerm),
+						new Filter("MT_SEG_DESC", FilterOperator.Contains, searchTerm),
+						new Filter("MARKET_SEG", FilterOperator.Contains, searchTerm),
+						new Filter("COMMENTS", FilterOperator.Contains, searchTerm),
+						new Filter("MKT_SIGN", FilterOperator.Contains, searchTerm)
+					], false);
+					binding.filter([oFilterArr]);
+				}
 			},
 
 			onDelete: function (oEvent) {

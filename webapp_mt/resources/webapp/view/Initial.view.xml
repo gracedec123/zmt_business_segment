@@ -10,16 +10,19 @@
 						<fb:filterGroupItems>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Mkey" label="MT Business Key" labelTooltip="MT Business Key">
 								<fb:control>
-									<MultiInput id="idMKey" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpKey" showSuggestion="true" suggestionItems="{oTable>/}">
+									<MultiInput id="idMKey" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpKey" showSuggestion="true"
+										suggestionItems="{oTable>/}">
 										<suggestionItems>
 											<core:Item text="{oTable>MT_KEY}"/>
 										</suggestionItems>
 									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
-							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldToDesc" label="Customer Sold-To Desc." labelTooltip="Customer Sold-To Desc.">
+							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="SoldToDesc" label="Customer Sold-To Desc."
+								labelTooltip="Customer Sold-To Desc.">
 								<fb:control>
-									<MultiInput id="idMcusDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCusDesc" showSuggestion="true" suggestionItems="{oCusDesc>/}">
+									<MultiInput id="idMcusDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpCusDesc" showSuggestion="true"
+										suggestionItems="{oCusDesc>/}">
 										<suggestionItems>
 											<core:Item text="{oCusDesc>SOLD_TO_DESC}"/>
 										</suggestionItems>
@@ -28,16 +31,19 @@
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Material Desc" label="Material Desc." labelTooltip="Material Desc">
 								<fb:control>
-									<MultiInput id="idMmatDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMatDesc" showSuggestion="true" suggestionItems="{oMatDesc>/}">
+									<MultiInput id="idMmatDesc" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMatDesc" showSuggestion="true"
+										suggestionItems="{oMatDesc>/}">
 										<suggestionItems>
 											<core:Item text="{oMatDesc>MAKTX}"/>
 										</suggestionItems>
 									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
-							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="MarketingSegment" label="Marketing Segment" labelTooltip="Marketing Segment">
+							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="MarketingSegment" label="Marketing Segment"
+								labelTooltip="Marketing Segment">
 								<fb:control>
-									<MultiInput id="idMtseg" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMtSeg" showSuggestion="true" suggestionItems="{oMtSeg>/}">
+									<MultiInput id="idMtseg" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMtSeg" showSuggestion="true"
+										suggestionItems="{oMtSeg>/}">
 										<suggestionItems>
 											<core:Item text="{oMtSeg>MARKET_SEG}"/>
 										</suggestionItems>
@@ -46,14 +52,16 @@
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Comments" label="Comments" labelTooltip="Comments">
 								<fb:control>
-									<MultiInput id="idMcom" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMCom" showSuggestion="true" suggestionItems="{oCom>/}">
+									<MultiInput id="idMcom" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpMCom" showSuggestion="true"
+										suggestionItems="{oCom>/}">
 										<suggestionItems>
 											<core:Item text="{oCom>COMMENTS}"/>
 										</suggestionItems>
 									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
-							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Last Modified By" label="Last Modified By" labelTooltip="Last Modified By">
+							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Last Modified By" label="Last Modified By"
+								labelTooltip="Last Modified By">
 								<fb:control>
 									<MultiInput id="idMUsr" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpUsr" showSuggestion="true" suggestionItems="{oUsr>/}">
 										<suggestionItems>
@@ -74,14 +82,16 @@
 							</fb:FilterGroupItem>
 							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="Msign" label="Mkting Signoff" labelTooltip="Mkting Signoff">
 								<fb:control>
-									<MultiInput id="idMSign" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpSign" showSuggestion="true" suggestionItems="{oSign>/}">
+									<MultiInput id="idMSign" width="200%" showValueHelp="true" valueHelpRequest="onValueHelpSign" showSuggestion="true"
+										suggestionItems="{oSign>/}">
 										<suggestionItems>
 											<core:Item text="{oSign>MKT_SIGN}"/>
 										</suggestionItems>
 									</MultiInput>
 								</fb:control>
 							</fb:FilterGroupItem>
-							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="MsegSap" label="MT Biz_seg_ID_SAP" labelTooltip="SAP Business Segment">
+							<fb:FilterGroupItem visibleInFilterBar="true" groupName="_BASIC1" name="MsegSap" label="MT Biz_seg_ID_SAP"
+								labelTooltip="SAP Business Segment">
 								<fb:control>
 									<Label text="MT Biz Seg SAP"/>
 									<MultiComboBox id="comboBoxS" items="{oMTSegSap>/}">
@@ -99,6 +109,7 @@
 							</fb:FilterGroupItem>
 						</fb:filterGroupItems>
 					</fb:FilterBar>
+					<MessageStrip id="messageStrip" text="{/message}" visible="{/messageVisible}" type="{/messageType}"/>
 					<Toolbar class="stickyToolbar">
 						<Label busy="false" design="Bold" id="__labelso" required="true" text="XLSX File Path" textAlign="Left" width="110px"
 							class="sapUiSmallMarginEnd"/>
@@ -205,8 +216,7 @@
 						<contentLeft>
 							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://arrow-right" type="Emphasized" text="Transfer" press="onTransfer"/>
 							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://delete" type="Emphasized" text="Delete" press="onDelete"/>
-							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://signature" type="Accept" text="Multi signoff" press="onSignSave"/><!-- "onSignoff"/> -->
-						</contentLeft>
+							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://signature" type="Accept" text="Multi signoff" press="onSignSave"/><!-- "onSignoff"/> --></contentLeft>
 						<contentMiddle>
 							<Button width="100px" id="Sync" icon="sap-icon://refresh" press="onSync" type="Default"/>
 						</contentMiddle>

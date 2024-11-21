@@ -216,7 +216,12 @@
 						<contentLeft>
 							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://arrow-right" type="Emphasized" text="Transfer" press="onTransfer"/>
 							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://delete" type="Emphasized" text="Delete" press="onDelete"/>
-							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://signature" type="Accept" text="Multi signoff" press="onSignSave"/><!-- "onSignoff"/> --></contentLeft>
+							<Button class="sapUiTinyMarginBeginEnd" icon="sap-icon://signature" type="Accept" text="Multi signoff" press="onSignSave"/>
+							<!-- "onSignoff"/> -->
+							<Button icon="sap-icon://alert" text="{Message>/messageCount}" visible="{= ${message>/}.length > 0 }" type="Emphasized"
+								press="onMessagePopoverPress"/>
+							<Button id="clearMessagesBtn" text="Clear Messages" press="onClearMessages"/>
+						</contentLeft>
 						<contentMiddle>
 							<Button width="100px" id="Sync" icon="sap-icon://refresh" press="onSync" type="Default"/>
 						</contentMiddle>

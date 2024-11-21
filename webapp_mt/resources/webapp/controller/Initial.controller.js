@@ -9,16 +9,25 @@ sap.ui.define([
 		"webapp/webapp/view/xlsx",
 		"sap/ui/model/Sorter",
 		"sap/ui/core/UIComponent",
-		"sap/ui/export/Spreadsheet"
+		"sap/ui/export/Spreadsheet",
+		'sap/m/MessagePopover',
+		'sap/m/MessageItem'
 	],
 
-	function (Controller, Fragment, MessageToast, JSONModel, Filter, FilterOperator, jszip, xlsx, Sorter, UIComponent, Spreadsheet) {
+	function (Controller, Fragment, MessageToast, JSONModel, Filter, FilterOperator, jszip, xlsx, Sorter, UIComponent, Spreadsheet,
+		MessagePopover, MessageItem) {
 		//	MockServer, ODataModel) {
 		"use strict";
 
 		return Controller.extend("webapp.webapp.controller.Initial", {
 
 			onInit: function () {
+				var aMessages = [];
+				var oModel = new JSONModel({
+					messages: aMessages,
+					messageCount: 0
+				});
+				this.getView().setModel(oModel, "Message");
 				var oModelMsg = new JSONModel({
 					message: "",
 					messageVisible: false,
@@ -72,6 +81,54 @@ sap.ui.define([
 					}
 				});
 			},
+			onMessagePopoverPress: function (oEvent) {
+				var oView = this.getView();
+				var oPopover;
+
+				// Check if the popover is already created
+				if (!this._oMessagePopover) {
+					// Create popover from fragment
+					oPopover = Fragment.load({
+						id: oView.getId(),
+						name: "webapp.webapp.fragment.MessagePopover",
+						controller: this
+					}).then(function (oPopover) {
+						this._oMessagePopover = oPopover;
+						oView.addDependent(oPopover); // keep popover in the view's dependency chain
+
+						// Bind items to the popover
+						oPopover.bindAggregation("items", {
+							path: "Message>/messages",
+							template: new MessageItem({
+								title: "{Message>title}",
+								type: "{Message>type}",
+								description: "{Message>description}"
+							})
+						});
+
+						// Open the popover
+						oPopover.openBy(oEvent.getSource());
+					}.bind(this));
+				} else {
+					// If already created, just open it
+					oPopover = this._oMessagePopover;
+					oPopover.openBy(oEvent.getSource());
+				}
+			},
+			onClearMessages: function () {
+				// Clear all messages from MessageManager
+				var oMsgManager = sap.ui.getCore().getMessageManager();
+				oMsgManager.removeAllMessages(); // Remove all messages
+
+				// Clear messages from model as well
+				var oModel = this.getView().getModel("Message");
+				var aMessages = oModel.getData().messages;
+				oModel.setProperty("/messages", []); // Clear messages array in model
+				oModel.setProperty("/messageCount", aMessages.length);
+
+				// Optionally refresh the model if needed
+				oModel.refresh();
+			},
 			onSync: function () {
 				var oModel = this.getView().getModel();
 				// Clear the message and hide the MessageStrip
@@ -94,6 +151,17 @@ sap.ui.define([
 				var oMultiInput = this.byId("idMmatDesc");
 				oMultiInput.removeAllTokens();
 				this.loadTableData();
+				var oMsgManager = sap.ui.getCore().getMessageManager();
+				oMsgManager.removeAllMessages(); // Remove all messages
+
+				// Clear messages from model as well
+				var oModel = this.getView().getModel("Message");
+				oModel.setProperty("/messages", []); // Clear messages array in model
+				var aMessages = oModel.getData().messages;
+				oModel.setProperty("/messageCount", aMessages.length);
+
+				// Optionally refresh the model if needed
+				oModel.refresh();
 			},
 			onValueHelpKey: function (oEvent) {
 				var sInputValue = oEvent.getSource().getValue(),
@@ -915,7 +983,13 @@ sap.ui.define([
 			},
 
 			onuploadBtn: function (oEvent) {
-
+				
+				// Clear messages from model as well
+				var oModelMes = this.getView().getModel("Message");
+				oModelMes.setProperty("/messages", []); // Clear messages array in model
+				var aMessagesMes = oModelMes.getData().messages;
+				oModelMes.setProperty("/messageCount", aMessagesMes.length);
+				
 				var oModel = this.getView().getModel();
 				// Clear the message and hide the MessageStrip
 				oModel.setProperty("/message", "");
@@ -1008,39 +1082,60 @@ sap.ui.define([
 							const zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
 							const zeroString = Math.pow(10, zeros).toString().substr(1);
 							const paddedNum = (num < 0 ? '-' : '') + zeroString + n;
-							if (entry.MT_SEG_ID_SAP === "531") {
-								entry.MT_SEG_ID = "53D";
-								entry.MT_SEG_DESC = "Media - Excipients";
-							}
-							if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
-								entry.MT_SEG_ID = "XXX";
-							}
 							// Look up the data item using the padded MATNR value
 							var dataMrk = datam.oData;
 							const dataMk = new Map(dataMrk.map(item => [item.MT_ID, item]));
 							const dataItem = dataMap.get(paddedNum);
+
+							var oModelId = that.getView().getModel();
+							if (entry.MT_SEG_ID !== dataItem.MVGR4) {
+								var smesid = 'MT Biz_Segment Changed from ' + entry.MT_SEG_ID + ' to ' + dataItem.MVGR4 + ' for MT Key ' + entry.MT_KEY;
+								var oModelid = that.getView().getModel("Message");
+								var aMessages = oModelid.getData().messages;
+
+								// Add new message to the model
+								aMessages.push({
+									type: "Warning",
+									title: entry.MT_KEY,
+									description: smesid
+								});
+								// Update message count and refresh model
+								oModelid.setProperty("/messageCount", aMessages.length);
+								oModelid.refresh();
+								entry.MT_SEG_ID = dataItem.MVGR4;
+								entry.MT_SEG_DESC = dataItem.BEZEI;
+								entry.MT_SEG_ID_SAP = dataItem.MVGR4;
+								entry.MT_SEG_DESC_SAP = dataItem.BEZEI;
+
+								if (entry.MT_SEG_ID_SAP === "531") {
+									entry.MT_SEG_ID = "53D";
+									entry.MT_SEG_DESC = "Media - Excipients";
+								}
+								if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
+									entry.MT_SEG_ID = "XXX";
+								}
+							}
 							const dataM = dataMk.get(entry.MT_SEG_ID);
 							if (dataM) {
 								entry.MARKET_SEG = dataM.MT_SEG;
 							}
 							if (dataItem) {
-								entry.MT_SEG_ID_SAP = dataItem.MVGR4;
-								entry.MT_SEG_DESC_SAP = dataItem.BEZEI;
 								const dataMS = dataMk.get(entry.MT_SEG_ID_SAP);
-								if(dataMS){
-								if (dataM.PROFIT !== dataMS.PROFIT) {
-									var oModel = that.getView().getModel();
-									var smes = 'Please enter correct segment for the Key ' + entry.MT_KEY;
-									oModel.setProperty("/message", smes);
-									oModel.setProperty("/messageVisible", true);
-									oModel.setProperty("/messageType", "Error");
-								} else {
+								if (dataMS) {
+									if (dataM.PROFIT !== dataMS.PROFIT) {
+										var oModel = that.getView().getModel();
+										var smes = 'Please enter correct segment for the Key ' + entry.MT_KEY;
+										oModel.setProperty("/message", smes);
+										oModel.setProperty("/messageVisible", true);
+										oModel.setProperty("/messageType", "Error");
+									} else {
 
-									var oModel = that.getView().getModel();
-									// Clear the message and hide the MessageStrip
-									oModel.setProperty("/message", "");
-									oModel.setProperty("/messageVisible", false);
-								}}
+										var oModel = that.getView().getModel();
+										// Clear the message and hide the MessageStrip
+										oModel.setProperty("/message", "");
+										oModel.setProperty("/messageVisible", false);
+									}
+								}
 							} else {
 								console.warn(`No data found for MATNR ${entry.MATNR}`);
 							}
@@ -1568,11 +1663,11 @@ sap.ui.define([
 				var oSelectedItem = oEvent.getSource().getParent().getBindingContext("tableModel");
 				var oSelectedData = oSelectedItem.getObject();
 				this.oOriginalItem = Object.assign({}, oSelectedData);
-				this.getView().getModel("dialogModel").setData(this.oOriginalItem);
 				var busyDialog = new sap.m.BusyDialog();
 				var oPtions = new JSONModel();
 				this.getView().setModel(oPtions, "options");
 				busyDialog.open();
+				this.getView().getModel("dialogModel").setData(this.oOriginalItem);
 				var that = this;
 				var numZeros = 18;
 				var num = this.oOriginalItem.MATNR;
@@ -1583,11 +1678,8 @@ sap.ui.define([
 					zeroString = '-' + zeroString;
 				}
 				num = zeroString + n;
-				//	if (this.oOriginalItem.MT_SEG_ID === "531") {
-				//		this.oOriginalItem.MT_SEG_ID = "53D";
-				//	} else {
 				var datavalue = JSON.stringify(num);
-				var datavalue1 = JSON.stringify(that.oOriginalItem.MT_SEG_ID_SAP);
+				var datavalue1 = JSON.stringify(this.oOriginalItem.MT_SEG_ID_SAP);
 				$.ajax({
 					url: "/xsjs_crud/FetchProfit.xsjs",
 					method: "GET",
@@ -1613,45 +1705,31 @@ sap.ui.define([
 								});
 								var len = dataCombo.length;
 								oPtions.setSizeLimit(len);
-								/*		var idx = dataCombo.findIndex(item => item.MT_ID === "XXX");
-										if (idx > 0) {
-											dataCombo[idx].MT_DESC = "No Default Segment";
-										}*/
 								oPtions.setData(dataCombo);
 							}
 						});
 					}
-
 				});
-				/*		if (this.oOriginalItem.MT_SEG_ID === "531") {
-							this.oOriginalItem.MT_SEG_ID = "53D";
-						}
-						//	}
-						if (that.oOriginalItem.SOLD_TO === "853379" && that.oOriginalItem.MATNR === "5174890") {
-							that.oOriginalItem.MT_SEG_ID = "XXX";
-							//	that.oOriginalItem.MT_SEG_ID_DESC = "No Default Segment";
-						}*/
-				//	that.oOriginalItem.MT_SEG_ID_SAP = data[0].MVGR4 + ' ' + data[0].BEZEI;
 
-				if (!that._oDialog) {
+				if (!this._oDialog) {
 					Fragment.load({
-						id: that.getView().getId(),
+						id: this.getView().getId(),
 						name: "webapp.webapp.fragment.UpdateItemDialog",
-						controller: that
+						controller: this
 					}).then(function (oDialog) {
-						that._oDialog = oDialog;
-						that.getView().addDependent(that._oDialog);
+						this._oDialog = oDialog;
+						this.getView().addDependent(this._oDialog);
 
-						if (!that._oDialog.getModel()) {
-							that._oDialog.setModel(that.getView().getModel("dialogModel"));
-						}
-						that._oDialog.open();
-						that.byId("comboBox").setSelectedKey(that.oOriginalItem.MT_SEG_ID);
-						that._oDialog.attachAfterClose(function () {
-							that._oDialog.destroy();
-							that._oDialog = null;
-						}.bind(that));
-					}.bind(that));
+						//	if (!this._oDialog.getModel()) {
+						this._oDialog.setModel(this.getView().getModel("dialogModel"));
+						//	}
+						this._oDialog.open();
+						this.byId("comboBox").setSelectedKey(this.oOriginalItem.MT_SEG_ID);
+						this._oDialog.attachAfterClose(function () {
+							this._oDialog.destroy();
+							this._oDialog = null;
+						}.bind(this));
+					}.bind(this));
 				} else {
 					this._oDialog.open();
 				}

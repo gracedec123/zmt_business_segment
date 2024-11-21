@@ -983,13 +983,13 @@ sap.ui.define([
 			},
 
 			onuploadBtn: function (oEvent) {
-				
+
 				// Clear messages from model as well
 				var oModelMes = this.getView().getModel("Message");
 				oModelMes.setProperty("/messages", []); // Clear messages array in model
 				var aMessagesMes = oModelMes.getData().messages;
 				oModelMes.setProperty("/messageCount", aMessagesMes.length);
-				
+
 				var oModel = this.getView().getModel();
 				// Clear the message and hide the MessageStrip
 				oModel.setProperty("/message", "");
@@ -1089,7 +1089,11 @@ sap.ui.define([
 
 							var oModelId = that.getView().getModel();
 							if (entry.MT_SEG_ID !== dataItem.MVGR4) {
-								var smesid = 'MT Biz_Segment Changed from ' + entry.MT_SEG_ID + ' to ' + dataItem.MVGR4 + ' for MT Key ' + entry.MT_KEY;
+								if (entry.MT_SEG_ID !== undefined) {
+									var smesid = 'MT Biz_Segment Changed from ' + entry.MT_SEG_ID + ' to ' + dataItem.MVGR4 + ' for MT Key ' + entry.MT_KEY;
+								} else {
+									var smesid = 'MT Biz_Segment updated with ' + dataItem.MVGR4 + ' for MT Key ' + entry.MT_KEY;
+								}
 								var oModelid = that.getView().getModel("Message");
 								var aMessages = oModelid.getData().messages;
 

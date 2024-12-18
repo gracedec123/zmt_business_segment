@@ -123,11 +123,9 @@ sap.ui.define([
 				// Clear messages from model as well
 				var oModel = this.getView().getModel("Message");
 				var aMessages = oModel.getData().messages;
-				oModel.setProperty("/messages", []); // Clear messages array in model
-				oModel.setProperty("/messageCount", aMessages.length);
-
-				// Optionally refresh the model if needed
 				oModel.refresh();
+				oModel.setProperty("/messages", []); // Clear messages array in model
+				oModel.setProperty("/messageCount", oMsgManager.removeAllMessages.length);
 			},
 			onSync: function () {
 				var oModel = this.getView().getModel();

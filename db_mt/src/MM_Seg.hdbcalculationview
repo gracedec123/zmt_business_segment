@@ -10,6 +10,9 @@
   <DataSource id="TVM4T">
     <resourceUri>TVM4T</resourceUri>
   </DataSource>
+  <DataSource id="MARC">
+    <resourceUri>MARC</resourceUri>
+  </DataSource>
 </dataSources>
 <snapshotProcedures/>
 <calculationViews>
@@ -20,7 +23,6 @@
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="MVKE"/>
-  
     <filter>&quot;MVGR4&quot; is not NULL</filter>
   </calculationView>
   <calculationView xsi:type="Calculation:ProjectionView" id="Projection_2" filterExpressionLanguage="SQL">
@@ -33,16 +35,43 @@
     <input node="TVM4T"/>
     <filter>&quot;SPRAS&quot; = 'E'</filter>
   </calculationView>
-  <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="CN_N" joinType="inner">
+  <calculationView xsi:type="Calculation:ProjectionView" id="Projection_3">
     <viewAttributes>
       <viewAttribute id="MATNR"/>
+      <viewAttribute id="PRCTR"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="MARC"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_1_1" cardinality="CN_N" joinType="inner" multiJoinNode="Join_1" multiJoinCentralTable="Projection_1" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="MATNR"/>
+      <viewAttribute id="PRCTR"/>
       <viewAttribute id="MVGR4"/>
-      <viewAttribute id="BEZEI"/>
-      <viewAttribute hidden="true" id="JOIN$MVGR4$MVGR4"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Projection_1">
       <mapping xsi:type="Calculation:AttributeMapping" target="MATNR" source="MATNR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MVGR4" source="MVGR4"/>
+    </input>
+    <input node="Projection_3">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRCTR" source="PRCTR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MATNR" source="MATNR"/>
+    </input>
+    <joinAttribute name="MATNR"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_1_2" cardinality="CN_N" joinType="inner" multiJoinNode="Join_1" multiJoinCentralTable="Projection_1" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="MATNR"/>
+      <viewAttribute id="MVGR4"/>
+      <viewAttribute id="BEZEI"/>
+      <viewAttribute id="PRCTR"/>
+      <viewAttribute hidden="true" id="JOIN$MVGR4$MVGR4"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Join_1_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MATNR" source="MATNR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRCTR" source="PRCTR"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$MVGR4$MVGR4" source="MVGR4"/>
     </input>
     <input node="Projection_2">
@@ -53,19 +82,24 @@
     <joinAttribute name="JOIN$MVGR4$MVGR4"/>
   </calculationView>
 </calculationViews>
-<logicalModel id="Join_1">
+<logicalModel id="Join_1_2">
   <attributes>
     <attribute id="MATNR" order="1" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="Material Number"/>
-      <keyMapping columnObjectName="Join_1" columnName="MATNR"/>
+      <keyMapping columnObjectName="Join_1_2" columnName="MATNR"/>
     </attribute>
     <attribute id="MVGR4" order="2" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="Business Segment"/>
-      <keyMapping columnObjectName="Join_1" columnName="MVGR4"/>
+      <keyMapping columnObjectName="Join_1_2" columnName="MVGR4"/>
     </attribute>
     <attribute id="BEZEI" order="3" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="Description"/>
-      <keyMapping columnObjectName="Join_1" columnName="BEZEI"/>
+      <keyMapping columnObjectName="Join_1_2" columnName="BEZEI"/>
+    </attribute>
+  
+    <attribute id="PRCTR" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="Profit Center"/>
+      <keyMapping columnObjectName="Join_1_2" columnName="PRCTR"/>
     </attribute>
   </attributes>
   <calculatedAttributes/>
@@ -76,30 +110,39 @@
 <layout>
   <shapes>
     <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
-      <upperLeftCorner x="221" y="112"/>
+      <upperLeftCorner x="361.75405278666415" y="112"/>
     
       <rectangleSize width="160"/>
     </shape>
   
     <shape expanded="true" modelObjectName="Projection_1" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="92" y="356"/>
+      <upperLeftCorner x="91.99999999999997" y="391.9999976158142"/>
       <rectangleSize height="30" width="160"/>
     </shape>
     <shape expanded="false" modelObjectName="Projection_2" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="302" y="356"/>
+      <upperLeftCorner x="512" y="391.9999976158142"/>
       <rectangleSize height="30" width="160"/>
     </shape>
     <shape expanded="true" modelObjectName="Join_1" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="221" y="217"/>
+      <upperLeftCorner x="302" y="237"/>
       <rectangleSize height="30" width="160"/>
     </shape>
-    <shape modelObjectName="Projection_1" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+    <shape modelObjectName="Projection_1" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput" multiJoinViewNodeName="Join_1">
       <upperLeftCorner x="20" y="30"/>
       <rectangleSize width="136"/>
     </shape>
-    <shape modelObjectName="Projection_2" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+    <shape modelObjectName="Projection_2" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput" multiJoinViewNodeName="Join_1">
       <upperLeftCorner x="320" y="30"/>
       <rectangleSize width="136"/>
+    </shape>
+  
+    <shape modelObjectName="Projection_3" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput" multiJoinViewNodeName="Join_1">
+      <upperLeftCorner x="238" y="173"/>
+      <rectangleSize width="136.0234375"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Projection_3" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="302" y="391.9999976158142"/>
+      <rectangleSize height="30" width="160"/>
     </shape>
   </shapes>
 </layout>

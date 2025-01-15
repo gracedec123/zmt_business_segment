@@ -15,7 +15,7 @@ var data = JSON.parse(aCmd);
 $.response.contentType = "application/json";
 var conn = await $.hdb.getConnection();
 
-var query = 'SELECT "MATNR", "MVGR4", "BEZEI" FROM "MM_Seg" WHERE "MATNR" = ?';
+var query = 'SELECT "MATNR", "MVGR4", "BEZEI", "PRCTR" FROM "MM_Seg" WHERE "MATNR" = ?';
 var rs = await conn.executeQuery(query, [data]);
 $.response.contentType = "application/json";
 var body = "";

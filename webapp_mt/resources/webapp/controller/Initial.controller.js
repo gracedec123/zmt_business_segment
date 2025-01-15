@@ -36,6 +36,8 @@ sap.ui.define([
 				this.getView().setModel(oModelMsg);
 				var oColumn = this.getView().byId("hideColumn");
 				oColumn.setVisible(!oColumn.getVisible());
+				var oColumn1 = this.getView().byId("hideColumn1");
+				oColumn1.setVisible(!oColumn1.getVisible());
 				var oColumn2 = this.getView().byId("hideColumn2");
 				oColumn2.setVisible(!oColumn2.getVisible());
 				var oColumn3 = this.getView().byId("hideColumn3");
@@ -620,6 +622,13 @@ sap.ui.define([
 				var oSorter = new Sorter("MKT_SIGN", this._bDescendingSort);
 				binding.sort(oSorter);
 			},
+			onFilterMTPc: function (oEvent) {
+				var table = this.byId("tableId1");
+				var binding = table.getBinding("items");
+				this._bDescendingSort = !this._bDescendingSort;
+				var oSorter = new Sorter("PROFIT_CENTER", this._bDescendingSort);
+				binding.sort(oSorter);
+			},
 			onFilterComments: function (oEvent) {
 				var table = this.byId("tableId1");
 				var binding = table.getBinding("items");
@@ -686,6 +695,8 @@ sap.ui.define([
 			onPress: function (oEvent) {
 				var oColumn = this.getView().byId("hideColumn");
 				oColumn.setVisible(!oColumn.getVisible());
+				var oColumn1 = this.getView().byId("hideColumn1");
+				oColumn1.setVisible(!oColumn1.getVisible());
 				var oColumn2 = this.getView().byId("hideColumn2");
 				oColumn2.setVisible(!oColumn2.getVisible());
 				var oColumn3 = this.getView().byId("hideColumn3");
@@ -1084,9 +1095,13 @@ sap.ui.define([
 							var dataMrk = datam.oData;
 							const dataMk = new Map(dataMrk.map(item => [item.MT_ID, item]));
 							const dataItem = dataMap.get(paddedNum);
-
+							entry.PROFIT_CENTER = dataItem.PRCTR;
+							const datasegid = dataMk.get(entry.MT_SEG_ID);
+							const datasegid_sap = dataMk.get(dataItem.MVGR4);
 							var oModelId = that.getView().getModel();
-							if (entry.MT_SEG_ID !== dataItem.MVGR4) {
+							if ((datasegid && datasegid.PROFIT ? datasegid.PROFIT : null)
+							!==  (datasegid_sap && datasegid_sap.PROFIT ? datasegid_sap.PROFIT : null)){
+						//	if (entry.MT_SEG_ID !== dataItem.MVGR4) {
 								if (entry.MT_SEG_ID !== undefined) {
 									var smesid = 'MT Biz_Segment Changed from ' + entry.MT_SEG_ID + ' to ' + dataItem.MVGR4 + ' for MT Key ' + entry.MT_KEY;
 								} else {
@@ -1108,6 +1123,11 @@ sap.ui.define([
 								entry.MT_SEG_DESC = dataItem.BEZEI;
 								entry.MT_SEG_ID_SAP = dataItem.MVGR4;
 								entry.MT_SEG_DESC_SAP = dataItem.BEZEI;
+							} else{
+							
+							entry.MT_SEG_ID_SAP = entry.MT_SEG_ID;
+							entry.MT_SEG_DESC_SAP = entry.MT_SEG_DESC;
+							}
 
 								if (entry.MT_SEG_ID_SAP === "531") {
 									entry.MT_SEG_ID = "53D";
@@ -1116,7 +1136,6 @@ sap.ui.define([
 								if (entry.SOLD_TO === "853379" && entry.MATNR === "5174890") {
 									entry.MT_SEG_ID = "XXX";
 								}
-							}
 							const dataM = dataMk.get(entry.MT_SEG_ID);
 							if (dataM) {
 								entry.MARKET_SEG = dataM.MT_SEG;
@@ -1242,6 +1261,7 @@ sap.ui.define([
 								MT_SEG_DESC: aTableData[i].MT_SEG_DESC,
 								MT_SEG_ID_SAP: aTableData[i].MT_SEG_ID_SAP,
 								MT_SEG_DESC_SAP: aTableData[i].MT_SEG_DESC_SAP,
+								PROFIT_CENTER: aTableData[i].PROFIT_CENTER,
 								MARKET_SEG: aTableData[i].MARKET_SEG,
 								COMMENTS: aTableData[i].COMMENTS,
 								MKT_SIGN: aTableData[i].MKT_SIGN,

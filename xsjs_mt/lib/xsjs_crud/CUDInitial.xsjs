@@ -47,10 +47,10 @@ try {
 
 async function insertUpdateInitial(dataArray) {
 	var query =
-		'UPDATE "ZMT_Initial_data" SET "MT_SEG_ID" = ?, "MT_SEG_DESC" = ?, "MT_SEG_ID_SAP" = ?, "MT_SEG_DESC_SAP" = ?, "COMMENTS" = ?, "MKT_SIGN" = ?, "LAST_MODIFIED_USER" = ?, "LAST_MODIFIED_TIMESTAMP" = ? WHERE "MT_KEY" = ?';
+		'UPDATE "ZMT_Initial_data" SET "MT_SEG_ID" = ?, "MT_SEG_DESC" = ?, "MT_SEG_ID_SAP" = ?, "MT_SEG_DESC_SAP" = ?, "PROFIT_CENTER" = ?, "MARKET_SEG" = ?, "COMMENTS" = ?, "MKT_SIGN" = ?, "LAST_MODIFIED_USER" = ?, "LAST_MODIFIED_TIMESTAMP" = ? WHERE "MT_KEY" = ?';
 
 	var insquery =
-		'INSERT INTO "ZMT_Initial_data" ("MT_KEY", "SOLD_TO", "SOLD_TO_DESC", "MATNR", "MAKTX", "MT_SEG_ID", "MT_SEG_DESC", "MT_SEG_ID_SAP", "MT_SEG_DESC_SAP", "MARKET_SEG", "COMMENTS", "MKT_SIGN", "CREATED_ON", "LAST_MODIFIED_USER", "LAST_MODIFIED_TIMESTAMP") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+		'INSERT INTO "ZMT_Initial_data" ("MT_KEY", "SOLD_TO", "SOLD_TO_DESC", "MATNR", "MAKTX", "MT_SEG_ID", "MT_SEG_DESC", "MT_SEG_ID_SAP", "MT_SEG_DESC_SAP","PROFIT_CENTER", "MARKET_SEG", "COMMENTS", "MKT_SIGN", "CREATED_ON", "LAST_MODIFIED_USER", "LAST_MODIFIED_TIMESTAMP") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 	var inspstmt;
 	var pstmt;
@@ -81,11 +81,13 @@ async function insertUpdateInitial(dataArray) {
 				pstmt.setString(2, data.MT_SEG_DESC);
 				pstmt.setString(3, data.MT_SEG_ID_SAP);
 				pstmt.setString(4, data.MT_SEG_DESC_SAP);
-				pstmt.setString(5, data.COMMENTS);
-				pstmt.setString(6, data.MKT_SIGN);
-				pstmt.setString(7, data.LAST_MODIFIED_USER);
-				pstmt.setString(8, data.LAST_MODIFIED_TIMESTAMP);
-				pstmt.setString(9, data.MT_KEY);
+				pstmt.setString(5, data.PROFIT_CENTER);
+				pstmt.setString(6, data.MARKET_SEG);
+				pstmt.setString(7, data.COMMENTS);
+				pstmt.setString(8, data.MKT_SIGN);
+				pstmt.setString(9, data.LAST_MODIFIED_USER);
+				pstmt.setString(10, data.LAST_MODIFIED_TIMESTAMP);
+				pstmt.setString(11, data.MT_KEY);
 
 				pstmt.addBatch(); // Add update to batch
 				console.log(`Added update for MT_KEY: ${data.MT_KEY}`);
@@ -103,12 +105,13 @@ async function insertUpdateInitial(dataArray) {
 				inspstmt.setString(7, data.MT_SEG_DESC);
 				inspstmt.setString(8, data.MT_SEG_ID_SAP);
 				inspstmt.setString(9, data.MT_SEG_DESC_SAP);
-				inspstmt.setString(10, data.MARKET_SEG);
-				inspstmt.setString(11, data.COMMENTS);
-				inspstmt.setString(12, data.MKT_SIGN);
-				inspstmt.setString(13, data.CREATED_ON);
-				inspstmt.setString(14, data.LAST_MODIFIED_USER);
-				inspstmt.setString(15, data.LAST_MODIFIED_TIMESTAMP);
+				inspstmt.setString(10, data.PROFIT_CENTER);
+				inspstmt.setString(11, data.MARKET_SEG);
+				inspstmt.setString(12, data.COMMENTS);
+				inspstmt.setString(13, data.MKT_SIGN);
+				inspstmt.setString(14, data.CREATED_ON);
+				inspstmt.setString(15, data.LAST_MODIFIED_USER);
+				inspstmt.setString(16, data.LAST_MODIFIED_TIMESTAMP);
 
 				inspstmt.addBatch(); // Add insert to batch
 				console.log(`Added insert for MT_KEY: ${data.MT_KEY}`);
@@ -149,7 +152,7 @@ async function insertUpdateInitial(dataArray) {
 	}
 }
 async function insertUpdateSave(data) {
-	var query = 'UPSERT "ZMT_Initial_data" VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE "MT_KEY" = ?';
+	var query = 'UPSERT "ZMT_Initial_data" VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE "MT_KEY" = ?';
 	var pstmt = await conn.prepareStatement(query);
 
 	pstmt.setString(1, data.MT_KEY);
@@ -177,25 +180,28 @@ async function insertUpdateSave(data) {
 	if (data.MT_SEG_DESC_SAP != "") {
 		pstmt.setString(9, data.MT_SEG_DESC_SAP);
 	};
+	if (data.PROFIT_CENTER != "") {
+		pstmt.setString(10, data.PROFIT_CENTER);
+	};
 	if (data.MARKET_SEG != "") {
-		pstmt.setString(10, data.MARKET_SEG);
+		pstmt.setString(11, data.MARKET_SEG);
 	};
 	if (data.COMMENTS != "") {
-		pstmt.setString(11, data.COMMENTS);
+		pstmt.setString(12, data.COMMENTS);
 	};
 	if (data.MKT_SIGN != "") {
-		pstmt.setString(12, data.MKT_SIGN);
+		pstmt.setString(13, data.MKT_SIGN);
 	};
 	if (data.CREATED_ON != "") {
-		pstmt.setString(13, data.CREATED_ON);
+		pstmt.setString(14, data.CREATED_ON);
 	};
 	if (data.LAST_MODIFIED_USER != "") {
-		pstmt.setString(14, data.LAST_MODIFIED_USER);
+		pstmt.setString(15, data.LAST_MODIFIED_USER);
 	};
 	if (data.LAST_MODIFIED_TIMESTAMP != "") {
-		pstmt.setString(15, data.LAST_MODIFIED_TIMESTAMP);
+		pstmt.setString(16, data.LAST_MODIFIED_TIMESTAMP);
 	};
-	pstmt.setString(16, data.MT_KEY);
+	pstmt.setString(17, data.MT_KEY);
 
 	// Execute the prepared statement
 	await pstmt.execute();
@@ -363,7 +369,7 @@ async function deleteInitial(data) {
 async function InitialFilter(data) {
 	var query =
 		`
-	SELECT "MT_KEY", "SOLD_TO", "SOLD_TO_DESC", "MATNR", "MAKTX", "MT_SEG_ID", "MT_SEG_DESC", "MT_SEG_ID_SAP", "MT_SEG_DESC_SAP", "MARKET_SEG",
+	SELECT "MT_KEY", "SOLD_TO", "SOLD_TO_DESC", "MATNR", "MAKTX", "MT_SEG_ID", "MT_SEG_DESC", "MT_SEG_ID_SAP", "MT_SEG_DESC_SAP","PROFIT_CENTER", "MARKET_SEG",
 		"COMMENTS", "MKT_SIGN", "CREATED_ON", "LAST_MODIFIED_USER", "LAST_MODIFIED_TIMESTAMP"
 	FROM "ZMT_Initial_data"
 	WHERE "LAST_MODIFIED_TIMESTAMP"

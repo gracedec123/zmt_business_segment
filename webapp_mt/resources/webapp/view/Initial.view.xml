@@ -158,6 +158,10 @@
 									<!--	<Text text="{i18n>MTSegId}"/>-->
 									<Button text="{i18n>MTSegId}" type="Transparent" width="200px" id="buttonMTSegId" press="onFilterMTSegId"/>
 								</Column>
+								<Column id="hideColumn1" width="100%">
+									<!--	<Text text="{i18n>MTPc}"/>-->
+									<Button text="{i18n>MTPc}" type="Transparent" width="200px" id="buttonMTPc" press="onFilterMTPc"/>
+								</Column>
 								<Column id="hideColumn" width="100%">
 									<!--	<Text text="{i18n>MktSeg}"/>-->
 									<Button text="{i18n>MktSeg}" type="Transparent" width="200px" id="buttonMktSeg" press="onFilterMktSeg"/>
@@ -196,6 +200,7 @@
 										<Text text="{tableModel>MAKTX}"/>
 										<Text text="{tableModel>MT_SEG_ID_SAP} {tableModel>MT_SEG_DESC_SAP}"/>
 										<Text text="{tableModel>MT_SEG_ID} {tableModel>MT_SEG_DESC}"/>
+										<Text text="{tableModel>PROFIT_CENTER}"/>
 										<Text text="{tableModel>MARKET_SEG}"/>
 										<Input value="{tableModel>COMMENTS}" editable="true" liveChange="onLive"/>
 										<Input value="{tableModel>MKT_SIGN}" editable="true" liveChange="onLive"/>

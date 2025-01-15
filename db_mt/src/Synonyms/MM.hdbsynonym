@@ -10,5 +10,11 @@
       "object": "TVM4T",
       "schema": "ECCPRD_BHP"
     }
+  },
+  "MARC": {
+    "target": {
+      "object": "MARC",
+      "schema": "ECCPRD_BHP"
+    }
   }
 }
